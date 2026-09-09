@@ -13,6 +13,10 @@
   * Darío Giménez
 
 ---
+## Abrir el Notebook en Google Colab
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dgimenezdeveloper/eurosat-ai-lab/blob/main/notebooks/01_etapa1_eda_baseline.ipynb)
+
+---
 
 ## 1. Definición del Problema y Justificación del Dominio
 
