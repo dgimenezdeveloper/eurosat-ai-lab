@@ -1,0 +1,169 @@
+[
+  {
+    "run_id": "EXP-007",
+    "timestamp": "2026-09-09 13:49:48",
+    "model_name": "Baseline (Regresi\u00f3n Log\u00edstica L2)",
+    "hyperparameters": {
+      "C": 4.01,
+      "penalty": "l2",
+      "solver": "lbfgs",
+      "scaler": "standard",
+      "max_iter": 500
+    },
+    "metrics": {
+      "train_accuracy": 99.77,
+      "dev_accuracy": 34.0,
+      "macro_f1": 0.3094,
+      "latency_ms": 326.71,
+      "gap": 65.77
+    },
+    "dataset": {
+      "train_samples": 6000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Prueba de hiperpar\u00e1metros"
+  },
+  {
+    "run_id": "EXP-006",
+    "timestamp": "2026-09-07 01:40:43",
+    "model_name": "Baseline (Regresi\u00f3n Log\u00edstica L2)",
+    "hyperparameters": {
+      "C": 3.91,
+      "penalty": "l2",
+      "solver": "lbfgs",
+      "scaler": "standard",
+      "max_iter": 400
+    },
+    "metrics": {
+      "train_accuracy": 99.87,
+      "dev_accuracy": 32.5,
+      "macro_f1": 0.2927,
+      "latency_ms": 74.85,
+      "gap": 67.37
+    },
+    "dataset": {
+      "train_samples": 3000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Prueba de hiperpar\u00e1metros"
+  },
+  {
+    "run_id": "EXP-005",
+    "timestamp": "2026-09-07 01:20:56",
+    "model_name": "Baseline (LogReg L2)",
+    "hyperparameters": {
+      "C": 3.81,
+      "penalty": "l2",
+      "solver": "lbfgs",
+      "scaler": "standard",
+      "max_iter": 125
+    },
+    "metrics": {
+      "train_accuracy": 85.2,
+      "dev_accuracy": 37.5,
+      "macro_f1": 0.3548,
+      "latency_ms": 42.34,
+      "gap": 47.7
+    },
+    "dataset": {
+      "train_samples": 5000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Prueba de hiperpar\u00e1metros"
+  },
+  {
+    "run_id": "EXP-004",
+    "timestamp": "2026-09-07 01:05:17",
+    "model_name": "Baseline (Logistic Regression)",
+    "hyperparameters": {
+      "C": 3.01,
+      "max_iter": 75,
+      "solver": "lbfgs"
+    },
+    "metrics": {
+      "train_accuracy": 82.23,
+      "dev_accuracy": 35.3,
+      "macro_f1": 0.3317,
+      "latency_ms": 17.71,
+      "gap": 46.93
+    },
+    "dataset": {
+      "train_samples": 3000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Ajuste de C y max_iter"
+  },
+  {
+    "run_id": "EXP-003",
+    "timestamp": "2026-09-07 00:55:35",
+    "model_name": "Baseline (Logistic Regression)",
+    "hyperparameters": {
+      "C": 3.51,
+      "max_iter": 500,
+      "solver": "lbfgs"
+    },
+    "metrics": {
+      "train_accuracy": 100.0,
+      "dev_accuracy": 32.7,
+      "macro_f1": 0.2924,
+      "latency_ms": 159.08,
+      "gap": 67.3
+    },
+    "dataset": {
+      "train_samples": 3000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Ajuste de C y max_iter"
+  },
+  {
+    "run_id": "EXP-002",
+    "timestamp": "2026-09-07 00:52:40",
+    "model_name": "Baseline (Logistic Regression)",
+    "hyperparameters": {
+      "C": 0.71,
+      "max_iter": 75,
+      "solver": "lbfgs"
+    },
+    "metrics": {
+      "train_accuracy": 82.93,
+      "dev_accuracy": 36.2,
+      "macro_f1": 0.3384,
+      "latency_ms": 22.6,
+      "gap": 46.73
+    },
+    "dataset": {
+      "train_samples": 3000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Ajuste de C y max_iter"
+  },
+  {
+    "run_id": "EXP-001",
+    "timestamp": "2026-09-07 00:51:44",
+    "model_name": "Baseline (Logistic Regression)",
+    "hyperparameters": {
+      "C": 0.71,
+      "max_iter": 300,
+      "solver": "lbfgs"
+    },
+    "metrics": {
+      "train_accuracy": 99.83,
+      "dev_accuracy": 32.4,
+      "macro_f1": 0.2916,
+      "latency_ms": 151.29,
+      "gap": 67.43
+    },
+    "dataset": {
+      "train_samples": 3000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Ajuste de C y max_iter"
+  }
+]

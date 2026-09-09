@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  eurosat-dev:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/workspace:cached
+      - eurosat-cache:/root/.cache
+    ports:
+      - "8000:8000"
+      - "8501:8501"
+      - "5173:5173"
+      - "8888:8888"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    ipc: host
+    command: /bin/bash -c "sleep infinity"
+
+volumes:
+  eurosat-cache:

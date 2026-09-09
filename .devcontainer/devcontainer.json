@@ -1,0 +1,23 @@
+{
+  "name": "EuroSAT AI Lab - DevContainer",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "eurosat-dev",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/opt/conda/bin/python",
+        "python.linting.enabled": true,
+        "python.formatting.provider": "black",
+        "editor.formatOnSave": true
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter"
+      ]
+    }
+  },
+  "forwardPorts": [8000, 8501, 5173, 8888],
+  "postCreateCommand": "python scripts/setup_project.py && cd frontend && pnpm install"
+}
