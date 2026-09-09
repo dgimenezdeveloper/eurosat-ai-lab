@@ -4,7 +4,7 @@
     "version": "v1.0.0",
     "accuracy": 33.2,
     "f1": 0.2989,
-    "latency": 106.99863409996033,
+    "latency": 237.37550592422485,
     "status": "Evaluated"
   }
 ]

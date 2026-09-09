@@ -1,34 +1,29 @@
-# Python / PyTorch / Caches
-__pycache__/
-*.py[cod]
-*$py.class
-.cache/
-eurosat-cache/
-
-# Jupyter Notebook Checkpoints
-.ipynb_checkpoints/
-*/.ipynb_checkpoints/*
-
-# Datos crudos (¡NO subir 27.000 fotos a GitHub!)
+# 1. Ignorar las 27.000 imagenes satelitales (2GB)
 data/raw/
-data/raw/*
-!data/processed/
-data/processed/*.json
+data/raw/**
+*.zip
+*.tar.gz
 
-# Pesos pesados de Deep Learning (>50MB)
-artifacts/models/*.pt
-artifacts/models/*.pth
-
-# Frontend / Node / PNPM
-node_modules/
-frontend/node_modules/
-frontend/dist/
-frontend/.pnpm-store/
+# 2. Ignorar el store de pnpm y node_modules (causantes de los 10k archivos)
 .pnpm-store/
-*.log
+.pnpm-store/**
+**/.pnpm-store/**
+node_modules/
+**/node_modules/**
+frontend/node_modules/
+frontend/.pnpm-store/
+dist/
+**/dist/**
 
-# Entornos y SO
-.env
-.env.local
+# 3. Ignorar temporales y checkpoints
+.Trash*
+**/.Trash*
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/**
+__pycache__/
+**/__pycache__/**
+*.py[cod]
 .DS_Store
 Thumbs.db
+*.log
+.vite/
