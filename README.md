@@ -1,30 +1,187 @@
+# 🛰️ EuroSAT AI Lab — Land Cover Multi-Class Satellite Vision & MLOps Platform
 
-# EuroSAT AI Lab: Clasificación de Cobertura Terrestre sobre Imágenes Satelitales Sentinel-2
+[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dgimenezdeveloper/eurosat-ai-lab/blob/main/notebooks/01_etapa1_eda_baseline.ipynb)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](#)
+[![PyTorch](https://img.shields.io/badge/Deep%20Learning-PyTorch%202.2-EE4C2C?logo=pytorch&logoColor=white)](#)
+[![API](https://img.shields.io/badge/API-FastAPI%200.110-009688?logo=fastapi&logoColor=white)](#)
+[![Frontend](https://img.shields.io/badge/Frontend-React%2019%20%7C%20Vite%208-61DAFB?logo=react&logoColor=white)](#)
+[![Docker](https://img.shields.io/badge/Environment-Docker%20CUDA%20DevContainer-2496ED?logo=docker&logoColor=white)](#)
+[![Dataset](https://img.shields.io/badge/Dataset-ESA%20Sentinel--2%20(27K)-green)](#)
 
-## Información Institucional y Académica
-* **Institución:** Universidad Nacional Guillermo Brown (UNaB)
-* **Carrera:** Tecnicatura Universitaria en Programación / Inteligencia Artificial
-* **Asignatura:** Inteligencia Artificial (Ciclo Lectivo 2026)
-* **Docente Titular:** Lic. Pablo Moreira
-* **Integrantes del Equipo:**
-  * Mauricio Barreras
-  * Sasha Porchia
-  * Federico Paaál
-  * Darío Giménez
-
----
-## Abrir el Notebook en Google Colab
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dgimenezdeveloper/eurosat-ai-lab/blob/main/notebooks/01_etapa1_eda_baseline.ipynb)
+> End-to-end computer vision laboratory and interactive MLOps platform for Land Use and Land Cover (LULC) multi-class classification on European Space Agency (ESA) Sentinel-2 satellite imagery. Features a unified ecosystem with a PyTorch/Scikit-Learn modeling pipeline, a FastAPI inference engine, an interactive React 19 tuning dashboard, and a Streamlit scientific explorer.
+>
+> 🌐 **Quick Navigation / Navegación Rápida:** [English Documentation](#-english-documentation) | [Documentación en Español](#-documentación-en-español)
 
 ---
 
-## 1. Definición del Problema y Justificación del Dominio
+## 🌐 English Documentation
 
-El presente proyecto aborda un problema de **aprendizaje supervisado de visión artificial multiclase** ($x \to y$), enfocado en la clasificación de patrones de cobertura del suelo (Land Use and Land Cover - LULC) a partir de imágenes satelitales del programa Sentinel-2 de la Agencia Espacial Europea (ESA).
+### 1. Executive Summary & Problem Formulation
+Accurate monitoring of surface land use and vegetation cover is critical for agricultural forecasting, urban planning, and environmental conservation. 
 
-### 1.1. Especificación del Espacio de Entrada y Salida
-* **Espacio de Entrada ($X$):** Imágenes ópticas en el espectro visible (RGB) con dimensiones de $64 \times 64$ píxeles y 3 canales de color, representables como tensores $x \in \mathbb{R}^{64 \times 64 \times 3}$ o vectores planos de $12.288$ características numéricas.
-* **Espacio de Salida ($Y$):** Etiqueta categórica discreta $y \in \{0, 1, \dots, 9\}$ correspondiente a 10 clases de uso de suelo:
+**EuroSAT AI Lab** addresses this multi-class supervised computer vision problem ($X \to Y$) using optical satellite imagery from the ESA Sentinel-2 mission:
+- **Input Space ($X$):** Optical satellite patches with dimensions of $64 \times 64$ pixels and 3 visible color bands (RGB), flattened into vectors of $12,288$ features or treated as $64 \times 64 \times 3$ tensors.
+- **Output Space ($Y$):** 10 mutually exclusive land use and land cover classes:
+  1. *AnnualCrop* (Annual Crop)
+  2. *Forest* (Forest)
+  3. *HerbaceousVegetation* (Herbaceous Vegetation)
+  4. *Highway* (Highway / Road)
+  5. *Industrial* (Industrial Area)
+  6. *Pasture* (Pasture)
+  7. *PermanentCrop* (Permanent Crop)
+  8. *Residential* (Residential Area)
+  9. *River* (River)
+  10. *SeaLake* (Sea or Lake)
+
+#### Computer Vision Domain Challenges
+- **Spectral Ambiguity:** Vegetative categories (*Forest*, *Pasture*, *HerbaceousVegetation*, *PermanentCrop*) share overlapping green reflectance signatures in the visible spectrum.
+- **Topological Confusion:** Linear man-made infrastructure (*Highway*) and natural waterways (*River*) share continuous edge geometries requiring spatial texture context.
+- **Structural Bias in Linear Models:** Flattening $64 \times 64 \times 3$ images into isolated pixels destroys 2D spatial correlations, making linear models incapable of detecting complex textures.
+
+---
+
+### 2. Evaluation System & MLOps Governance
+
+#### A. Deterministic Stratified Split (80 / 10 / 10)
+To avoid data leakage and preserve class distribution across sets, the 27,000 images are split deterministically (`seed = 42`):
+- **Train Set (80% — 21,600 images):** Reserved strictly for model parameter optimization ($W, b$).
+- **Dev / Validation Set (10% — 2,700 images):** Used for architecture iteration, hyperparameter tuning (regularization, learning rates), and bias/variance error diagnosis.
+- **Test Set (10% — 2,700 images):** Isolated and locked until the final project stage (Stage 5) to ensure an unbiased estimate of generalization error.
+
+#### B. Single-Number Optimization & Satisficing Metrics
+- **Primary Optimization Metric:** **Macro F1-Score** on the Dev set, ensuring equal weighting across all 10 land cover classes regardless of minor sample size variations.
+- **Operational Constraints (Satisficing Metrics):**
+  - **Inference Latency:** $\le 50\text{ ms}$ per sample on a standard CPU.
+  - **Serialized Model Artifact:** $\le 100\text{ MB}$ on disk.
+- **Diagnostic Metrics:** Normalized Confusion Matrices (Row Recall) and Multiclass One-vs-Rest (OvR) ROC Curves with Macro-average AUC.
+
+#### C. Invariable MLOps Experiment Ledger
+Every experiment run—whether executed via JupyterLab or triggered from the React frontend—is logged into `artifacts/metrics/experiments_ledger.json`, capturing:
+- Unique run ID (e.g., `EXP-001`), timestamp, and model architecture.
+- Full hyperparameter configuration (Regularization $C$, Solver, Penalty $L_1/L_2$, Scaler type).
+- Train/Dev accuracy, generalization gap, Macro F1, and inference latency.
+- Automated clinical diagnosis: *Structural Underfitting* vs. *High Variance Overfitting*.
+
+---
+
+### 3. Architecture & Tech Stack
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        EUROSAT AI LAB TOPOLOGY                         │
+├───────────────────┬────────────────────────────────────────────────────┤
+│ Modeling & Data   │ Python 3.10+, PyTorch 2.2, torchvision,            │
+│                   │ Scikit-Learn 1.3, NumPy, Pandas, Pillow, Joblib    │
+├───────────────────┼────────────────────────────────────────────────────┤
+│ API & Telemetry   │ FastAPI 0.110, Uvicorn, Pydantic v2, CORS          │
+├───────────────────┼────────────────────────────────────────────────────┤
+│ User Interfaces   │ Frontend: React 19, Vite 8, Tailwind CSS v4,       │
+│                   │ Base UI primitives, Lucide Icons (Port 5173)       │
+│                   │ Science Console: Streamlit 1.32 (Port 8501)        │
+├───────────────────┼────────────────────────────────────────────────────┤
+│ Research Notebooks│ JupyterLab, Google Colab Integration (Port 8888)   │
+├───────────────────┼────────────────────────────────────────────────────┤
+│ Environment       │ VS Code DevContainers, Docker (PyTorch CUDA base)  │
+└───────────────────┴────────────────────────────────────────────────────┘
+```
+
+---
+
+### 4. Machine Learning 5-Stage Roadmap
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    PROGRESSIVE EXPERIMENTAL ROADMAP                         │
+├───────────────────┬─────────────────────────────────┬───────────────────────┤
+│ Stage             │ Architecture & Methods          │ Scientific Purpose    │
+├───────────────────┼─────────────────────────────────┼───────────────────────┤
+│ 1. Baseline       │ Multiclass Logistic Regression  │ Linear reference floor│
+│    (Completed)    │ (Softmax, StandardScaler, L-BFGS)│ and pipeline check.   │
+├───────────────────┼─────────────────────────────────┼───────────────────────┤
+│ 2. Deep MLP       │ Dense Neural Network            │ Overcome linear bias  │
+│    (Next)         │ (3+ layers, GELU/ReLU, Dropout) │ with non-linear units.│
+├───────────────────┼─────────────────────────────────┼───────────────────────┤
+│ 3. 2D CNN         │ Convolutional Neural Network    │ Extract hierarchical  │
+│                   │ (Conv2D, MaxPool, Augmentation) │ textures and edges.   │
+├───────────────────┼─────────────────────────────────┼───────────────────────┤
+│ 4. Latent VAE     │ Variational Autoencoder         │ Model representation  │
+│    (Exploratory)  │ (Probabilistic Encoder/Decoder) │ space & generation.   │
+├───────────────────┼─────────────────────────────────┼───────────────────────┤
+│ 5. Test Synthesis │ Final Evaluation on Test Set    │ Trade-off analysis    │
+│    (Closure)      │ (Single-run benchmark)          │ and final report.     │
+└───────────────────┴─────────────────────────────────┴───────────────────────┘
+```
+
+#### Stage 1 Empirical Baseline Findings
+- Feature extraction with Z-score standardization (`StandardScaler`) resolved gradient descent oscillations and avoided convergence warnings.
+- The linear Softmax baseline achieved:
+  - **Dev Accuracy:** $\approx 33.2\% - 37.5\%$
+  - **Macro F1-Score:** $0.2989 - 0.3548$
+  - **Macro-average ROC AUC:** $0.689 - 0.780$
+  - **Inference Latency:** $\approx 25 - 35\text{ ms}$ (Satisfies $\le 50\text{ ms}$ limit)
+- **Clinical Diagnosis:** High Structural Bias (*Underfitting*). While it significantly outperforms random guessing ($10\%$), the linear model severely confuses *Pasture* with *Forest* ($36\%$) and *SeaLake* ($36\%$), confirming the necessity of convolutional layers to capture spatial context.
+
+---
+
+### 5. Local Setup & Quick Start
+
+#### Option A: Docker DevContainer (Recommended)
+1. Install [Docker Desktop](https://www.docker.com/) and [VS Code](https://code.visualstudio.com/) with the **Dev Containers** extension.
+2. Clone the repository and open it in VS Code:
+   ```bash
+   git clone https://github.com/dgimenezdeveloper/eurosat-ai-lab.git
+   cd eurosat-ai-lab
+   code .
+   ```
+3. Press `F1` and select **"Dev Containers: Reopen in Container"**. The container will build PyTorch, Node.js, and dependencies automatically.
+
+#### Option B: Manual Local Setup
+```bash
+# 1. Clone repository & create virtual environment
+git clone https://github.com/dgimenezdeveloper/eurosat-ai-lab.git
+cd eurosat-ai-lab
+python -m venv venv
+source venv/bin/activate # Windows: venv\Scripts\activate
+
+# 2. Install Python dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# 3. Download dataset & generate stratified splits (80/10/10)
+python scripts/setup_project.py
+
+# 4. Launch all platform services simultaneously
+python scripts/start_all.py
+```
+
+Once running, access the services:
+- **React Frontend Dashboard:** [http://localhost:5173](http://localhost:5173)
+- **FastAPI Documentation (Swagger):** [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Streamlit Science Console:** [http://localhost:8501](http://localhost:8501)
+- **JupyterLab Server:** [http://localhost:8888](http://localhost:8888)
+
+---
+
+### 6. Project Team & Academic Credentials
+Developed within the **Artificial Intelligence (2026)** curriculum — *University Degree in Programming / Software Development* (Universidad Nacional Guillermo Brown - UNaB):
+
+- **Professor:** Lic. Pablo Moreira
+- **Engineering Team:**
+  - **Darío Giménez** — [GitHub](https://github.com/dgimenezdeveloper) • [LinkedIn](https://www.linkedin.com/in/daseg/)
+  - **Mauricio Barreras** — [GitHub](https://github.com/Mau-bar-iva) • [LinkedIn](https://www.linkedin.com/in/mauricio-barreras-235b8128a/)
+  - **Federico Paál** — [GitHub](https://github.com/FedericoPaal) • [LinkedIn](https://www.linkedin.com/in/federico-paal/)
+  - **Sasha Porchia** — UNaB AI Researcher
+
+---
+
+## 🇪🇸 Documentación en Español
+
+### 1. Resumen Ejecutivo y Planteo del Problema
+El monitoreo periódico de la cobertura del suelo y la vegetación es esencial para el pronóstico agropecuario, la planificación urbana y la gestión de recursos naturales.
+
+**EuroSAT AI Lab** aborda este problema de visión artificial supervisada multiclase ($X \to Y$) utilizando imágenes ópticas satelitales del programa Sentinel-2 de la Agencia Espacial Europea (ESA):
+- **Espacio de Entrada ($X$):** Parches satelitales de $64 \times 64$ píxeles y 3 bandas de color visible (RGB), aplanados en vectores de $12.288$ características o tratados como tensores de $64 \times 64 \times 3$.
+- **Espacio de Salida ($Y$):** 10 categorías de cobertura y uso del suelo:
   1. Cultivo Anual (*AnnualCrop*)
   2. Bosque (*Forest*)
   3. Vegetación Herbácea (*HerbaceousVegetation*)
@@ -36,184 +193,91 @@ El presente proyecto aborda un problema de **aprendizaje supervisado de visión 
   9. Río (*River*)
   10. Mar o Lago (*SeaLake*)
 
-### 1.2. Desafíos de la Tarea en Visión Artificial
-* **Ambigüedad Espectral:** Múltiples clases de vegetación (*Forest*, *Pasture*, *HerbaceousVegetation*, *PermanentCrop*) comparten firmas espectrales y tonalidades verdes similares en el rango visible.
-* **Ambigüedad Topológica:** Estructuras lineales artificiales (*Highway*) y naturales (*River*) poseen geometrías continuas comparables que requieren extracción de contexto textural para su discriminación.
-* **Invarianza Espacial y Complejidad:** La resolución de $64 \times 64$ píxeles obliga a modelar dependencias jerárquicas locales (bordes, esquinas y texturas compuestas) que un modelo lineal no puede capturar.
+#### Desafíos en el Dominio Satelital
+- **Ambigüedad Espectral:** Clases vegetales distintas (*Bosque*, *Pastizal*, *Vegetación Herbácea*, *Cultivo Permanente*) comparten firmas espectrales y tonalidades verdes similares en el rango visible.
+- **Confusión Topológica:** La infraestructura vial (*Autopista*) y los cauces hídricos (*Río*) comparten trazos lineales continuos que requieren análisis de textura para diferenciarse.
+- **Sesgo en Modelos Lineales:** El aplanado de imágenes a vectores independientes destruye las relaciones de vecindad espacial 2D, limitando la capacidad de separar clases complejas.
 
 ---
 
-## 2. Estrategia Pragmática de Partición y Evaluación
+### 2. Sistema de Evaluación y Gobernanza MLOps
 
-Siguiendo las directrices metodológicas de la asignatura, el diseño experimental se estructura para garantizar rigor estadístico y prevenir la fuga de información (*data leakage*).
+#### A. Partición Estratificada Fija (80 / 10 / 10)
+Para evitar fuga de información y asegurar representatividad estadística, el dataset de 27.000 imágenes se divide con una semilla determinística (`seed = 42`):
+- **Entrenamiento (Train - 80%, 21.600 muestras):** Destinado exclusivamente al ajuste de parámetros ($W, b$).
+- **Validación (Dev - 10%, 2.700 muestras):** Utilizado para selección de arquitecturas, calibración de hiperparámetros y diagnóstico de sesgo vs. varianza.
+- **Evaluación Final (Test - 10%, 2.700 muestras):** Aislado y bloqueado hasta la etapa de cierre (Etapa 5) para medir el error de generalización sin sesgo.
 
-### 2.1. Partición de Datos Estratificada (80 / 10 / 10)
-El conjunto total de 27.000 imágenes se divide de forma pseudoaleatoria y estratificada fijando una semilla determinística (`seed = 42`):
+#### B. Métricas de Optimización y Satisfacción
+- **Métrica Principal de Optimización:** **Macro F1-Score** sobre el conjunto Dev, garantizando igual ponderación para las 10 categorías sin importar variaciones de cantidad.
+- **Restricciones de Satisfacción Operativa:**
+  - **Latencia de Inferencia:** $\le 50\text{ ms}$ por muestra procesada en CPU estándar.
+  - **Tamaño del Modelo:** $\le 100\text{ MB}$ por archivo serializado en disco.
+- **Métricas Diagnósticas:** Matrices de confusión normalizadas por fila (Recall) y curvas ROC multiclase One-vs-Rest (OvR) con Macro AUC.
 
-* **Conjunto de Entrenamiento (Train - 80%, 21.600 muestras):** Destinado exclusivamente a la optimización de parámetros internos (pesos $W$ y sesgos $b$) mediante algoritmos basados en gradiente.
-* **Conjunto de Desarrollo / Validación (Dev - 10%, 2.700 muestras):** Utilizado como banco de iteración para la selección de arquitecturas, calibración de hiperparámetros (tasas de aprendizaje, regularización, tamaño de lote) y diagnóstico clínico de errores (sesgo vs. varianza).
-* **Conjunto de Prueba (Test - 10%, 2.700 muestras):** Mantenido en aislamiento durante todo el ciclo de investigación. Se evaluará **una única vez en la Etapa 5** para estimar el error de generalización no sesgado.
-
-```
-Total: 27.000 Imágenes Satelitales
-├── Train Set (80%): 21.600 muestras [Ajuste de Parámetros]
-├── Dev Set   (10%):  2.700 muestras [Ajuste de Hiperparámetros y Diagnóstico]
-└── Test Set  (10%):  2.700 muestras [Evaluación Final Única - Etapa 5]
-```
-
----
-
-## 3. Sistema de Métricas de Evaluación
-
-Para evitar optimizaciones conflictivas, se establece una clara distinción entre la métrica única de optimización y las restricciones de satisfacción operativas.
-
-### 3.1. Métrica de Optimización (Single-Number Metric): Macro F1-Score
-Dado que la exactitud global (*Accuracy*) puede ocultar debilidades en categorías críticas o con ligeras variaciones de balance, se adopta el **Macro F1-Score** sobre el conjunto Dev como criterio principal de selección de modelos:
-
-$$\text{Macro F1} = \frac{1}{K}\sum_{k=1}^{K} F1_k, \quad \text{donde } F1_k = 2 \cdot \frac{\text{Precisión}_k \cdot \text{Recall}_k}{\text{Precisión}_k + \text{Recall}_k}$$
-
-### 3.2. Métricas de Satisfacción (Satisficing Metrics)
-Restricciones de viabilidad de ingeniería requeridas para el despliegue del sistema:
-* **Latencia de Inferencia:** $\le 50\text{ ms}$ por imagen procesada en arquitectura CPU estándar.
-* **Tamaño del Modelo en Disco:** $\le 100\text{ MB}$ por artefacto serializado.
-
-### 3.3. Métricas Diagnósticas Secundarias
-* **Matriz de Confusión Normalizada por Filas:** Permite identificar la tasa de acierto directo (*Recall*) por clase en la diagonal principal y cuantificar los patrones sistemáticos de confusión cruzada.
-* **Curvas ROC Multiclase One-vs-Rest (OvR) y Macro AUC:** Evalúan la capacidad discriminativa del modelo a través de todos los umbrales de decisión $\theta \in [0, 1]$.
+#### C. Bitácora de Experimentos (MLOps Ledger)
+Cada corrida realizada en los Notebooks o desde el frontend web queda registrada en `artifacts/metrics/experiments_ledger.json`, documentando:
+- Identificador de corrida (`run_id`, ej. `EXP-001`), fecha, hora y arquitectura.
+- Hiperparámetros (Parámetro $C$, regularización $L_1/L_2$, algoritmo solver, escalado).
+- Exactitud en Train/Dev, brecha de varianza (*Gap*), Macro F1 y latencia.
+- Diagnóstico clínico automatizado (*Subajuste Estructural* vs. *Sobreajuste*).
 
 ---
 
-## 4. Marco Teórico y Protocolo de Diagnóstico de Errores
+### 3. Arquitectura y Stack Tecnológico
 
-El proyecto utiliza la descomposición formal del error esperado de generalización para guiar las modificaciones arquitectónicas:
-
-$$\mathbb{E}[(y - \hat{f}(x))^2] = \text{Sesgo}^2 + \text{Varianza} + \sigma_\varepsilon^2$$
-
-Donde:
-* $\text{Sesgo}^2 = (\mathbb{E}[\hat{f}(x)] - f(x))^2$: Error por incapacidad estructural de la hipótesis para capturar la función subyacente (*Underfitting*).
-* $\text{Varianza} = \mathbb{E}[(\hat{f}(x) - \mathbb{E}[\hat{f}(x)])^2]$: Sensibilidad del modelo al ruido específico de la muestra de entrenamiento (*Overfitting*).
-* $\sigma_\varepsilon^2$: Ruido irreducible inherente a los datos de teledetección.
-
-### 4.1. Protocolo Diagnóstico Integrado
-Se monitorean los errores empíricos y la brecha de varianza:
-
-$$\text{Error}_{\text{Train}} = 1 - \text{Accuracy}_{\text{Train}}$$
-$$\text{Error}_{\text{Dev}} = 1 - \text{Accuracy}_{\text{Dev}}$$
-$$\text{Gap} = \text{Error}_{\text{Dev}} - \text{Error}_{\text{Train}}$$
-
-* **Diagnóstico de Sesgo Alto ($\text{Error}_{\text{Train}} \gg 0$):**  
-  * *Acción:* Aumentar capacidad de la red (añadir capas o neuronas), sustituir transformaciones lineales por funciones de activación no lineales (GELU, ReLU), reducir regularización excesiva.
-* **Diagnóstico de Varianza Alta ($\text{Error}_{\text{Dev}} \gg \text{Error}_{\text{Train}}$ / $\text{Gap} > 10\%$):**  
-  * *Acción:* Incorporar regularización $L_2$ (*Weight Decay*), regularización estocástica (*Dropout*), normalización interna (*Batch Normalization*), aumento de datos (*Data Augmentation*) y detención temprana (*Early Stopping*).
-* **Diagnóstico de Discrepancia de Distribución (*Data Mismatch*):**  
-  * Se evalúa mediante la relación $\text{Error}_{\text{Dev-Train}} > \text{Error}_{\text{Train}}$. En caso de presentarse, la solución consiste en realinear los datos representativos de producción.
+- **Modelado y Datos:** Python 3.10+, PyTorch 2.2, torchvision, Scikit-Learn 1.3, NumPy, Pandas, Pillow, Joblib.
+- **API y Servicios:** FastAPI 0.110, Uvicorn, Pydantic v2.
+- **Interfaces de Usuario:**
+  - Frontend interactivo: React 19, Vite 8, Tailwind CSS v4, Base UI, Lucide Icons (Puerto 5173).
+  - Consola científica: Streamlit 1.32 (Puerto 8501).
+- **Entorno de Investigación:** Cuadernos JupyterLab y compatibilidad con Google Colab (Puerto 8888).
+- **Contenedores:** Docker DevContainers con aceleración CUDA/CPU.
 
 ---
 
-## 5. Evolución Progresiva del Trabajo Práctico por Etapas
+### 4. Hoja de Ruta en 5 Etapas
 
-```
-┌────────────────────────────────────────────────────────────────────────────────┐
-│                        MAPA DE EVOLUCIÓN EXPERIMENTAL                          │
-├─────────────────┬──────────────────────────────────┬───────────────────────────┤
-│ Etapa           │ Modelo / Metodología             │ Objetivo Teórico          │
-├─────────────────┼──────────────────────────────────┼───────────────────────────┤
-│ 1. Baseline     │ Regresión Logística Multiclase   │ Establecer piso lineal y  │
-│    (Completada) │ (Softmax sobre 12.288 píxeles)   │ verificar pipeline.       │
-├─────────────────┼──────────────────────────────────┼───────────────────────────┤
-│ 2. MLP Profundo │ Red Densa (3+ capas ocultas,     │ Quebrar el sesgo lineal   │
-│    (Siguiente)  │ GELU, Dropout, BatchNorm)        │ con no linealidad.        │
-├─────────────────┼──────────────────────────────────┼───────────────────────────┤
-│ 3. Convolucional│ CNN 2D (Bloques Conv + MaxPool)  │ Extraer jerarquías        │
-│                 │ + Data Augmentation              │ espaciales y texturas.    │
-├─────────────────┼──────────────────────────────────┼───────────────────────────┤
-│ 4. VAE          │ Variational Autoencoder          │ Modelar espacio latente e │
-│    (Opcional)   │ (Encoder-Decoder probabilístico) │ interpolación generativa. │
-├─────────────────┼──────────────────────────────────┼───────────────────────────┤
-│ 5. Síntesis     │ Evaluación final en Test Set     │ Comparación global, trade-│
-│    (Cierre)     │ (Evaluación única)               │ off y análisis ético.     │
-└─────────────────┴──────────────────────────────────┴───────────────────────────┘
+1. **Etapa 1 (Baseline Lineal - Estado Actual):** Regresión Logística multiclase (Softmax sobre 12.288 píxeles escalados con `StandardScaler`). Establece el piso de referencia superando ampliamente al azar puro ($33.2\% - 37.5\%$ de exactitud en Dev y Macro AUC de $0.689 - 0.780$), con diagnóstico de subajuste estructural.
+2. **Etapa 2 (Red Densa Profunda - Siguiente):** Perceptrón Multicapa (MLP) de 3 capas ocultas con funciones de activación no lineales (GELU/ReLU), normalización por lotes (*Batch Normalization*) y regularización estocástica (*Dropout*).
+3. **Etapa 3 (Red Convolucional):** CNN 2D con bloques convolucionales jerárquicos y aumento de datos (*Data Augmentation*) para modelar texturas y reducir la varianza.
+4. **Etapa 4 (Modelo Generativo VAE):** Autoencoder Variacional para explorar la continuidad del espacio latente satelital.
+5. **Etapa 5 (Síntesis y Evaluación Final):** Evaluación de una única pasada sobre el conjunto Test y análisis global de trade-offs.
+
+---
+
+### 5. Guía de Inicio Rápido
+
+```bash
+# 1. Clonar repositorio y crear entorno virtual
+git clone https://github.com/dgimenezdeveloper/eurosat-ai-lab.git
+cd eurosat-ai-lab
+python -m venv venv
+source venv/bin/activate # Windows: venv\Scripts\activate
+
+# 2. Instalar dependencias
+pip install -r requirements.txt
+
+# 3. Descargar dataset y generar particiones estratificadas
+python scripts/setup_project.py
+
+# 4. Iniciar todos los servicios del laboratorio
+python scripts/start_all.py
 ```
 
-### 5.1. Etapa 1: Análisis Exploratorio y Modelo Baseline (Estado Actual)
-* **Preprocesamiento y Normalización:**  
-  El análisis exploratorio de los canales RGB evidenció medias desplazadas ($\mu \approx 80-100$) y dispersión amplia ($\sigma \approx 35-50$). Se aplicó `StandardScaler` sobre el vector aplanado de $12.288$ características para acondicionar la superficie de error y evitar oscilaciones patológicas en el optimizador L-BFGS.
-* **Resultados Empíricos del Baseline:**
-  * Exactitud en Train: $\approx 85.2\%$ (sobre subconjunto muestral)
-  * Exactitud en Dev: $35.2\% - 37.5\%$
-  * Macro F1-Score en Dev: $0.3306 - 0.3548$
-  * Latencia de Inferencia: $\approx 30.37\text{ ms}$
-* **Diagnóstico de Etapa 1:**  
-  El modelo lineal supera al azar puro ($10\%$), validando la integridad de los datos. Sin embargo, sufre de un **Sesgo Alto estructural**: una combinación lineal $\sum w_i x_i + b$ colapsa matemáticamente y carece de noción de vecindad espacial, confundiendo severamente cubiertas vegetales homogéneas (*Pasture* vs. *Forest*) y patrones lineales (*Highway* vs. *River*).
+---
 
-### 5.2. Etapa 2: Análisis Cualitativo de Errores y Perceptrón Multicapa (MLP)
-* **Auditoría de 50 Errores:** Clasificación taxonómica de las instancias peor clasificadas por el Baseline para identificar ambigüedades espectrales y de textura.
-* **Arquitectura de Red Densa:** Implementación de un modelo de 3 capas ocultas ($512 \to 256 \to 128$ neuronas).
-* **Funciones de Activación No Lineales:** Utilización de **GELU** (*Gaussian Error Linear Unit*) y **ReLU** para evitar el colapso lineal y mitigar el desvanecimiento de gradientes característico de funciones sigmoideas y tanh en capas profundas.
-* **Control de Varianza:** Incorporación de **Batch Normalization** entre capas densas y **Dropout** estocástico ($p \in [0.2, 0.4]$).
+### 6. Equipo de Desarrollo y Credenciales Académicas
+Proyecto realizado en la cátedra de **Inteligencia Artificial (2026)** — *Tecnicatura Universitaria en Programación / Desarrollo de Software* (Universidad Nacional Guillermo Brown - UNaB):
 
-### 5.3. Etapa 3: Redes Neuronales Convolucionales (CNN)
-* **Arquitectura Convolucional:** Diseño de una red con 3 bloques jerárquicos (`Conv2D` con kernels $3 \times 3$ + `BatchNorm2d` + `ReLU` + `MaxPool2d`).
-* **Invarianza Espacial y Reducción de Parámetros:** Explotación de la correlación local de píxeles mediante campos receptivos, reduciendo drásticamente la cantidad de parámetros frente a capas densas equivalentes.
-* **Data Augmentation:** Aplicación de transformaciones afines aleatorias (rotaciones ortogonales, reflejos horizontales/verticales) para enriquecer la distribución de entrenamiento y suprimir la varianza.
-
-### 5.4. Etapa 4: Modelado Generativo Latente con VAE (Opcional)
-* **Arquitectura Variacional:** Implementación de un codificador que mapea imágenes a los parámetros de una distribución normal multivariada ($\mu_z, \log \sigma_z^2$) y un decodificador reconstructivo.
-* **Función de Pérdida VAE:** Combinación de error de reconstrucción (MSE / BCE) y divergencia de Kullback-Leibler ($\mathcal{D}_{\text{KL}}$) para regularizar la continuidad del espacio latente.
-* **Análisis de Espacio Latente:** Visualización de clústeres mediante reducción dimensional (t-SNE/PCA) e interpolación lineal entre clases.
-
-### 5.5. Etapa 5: Evaluación Final y Síntesis Comparativa
-* **Desbloqueo de Test Set:** Ejecución de una única pasada sobre las 2.700 imágenes finales.
-* **Tabla Maestra Comparativa:** Análisis de trade-off entre número de parámetros entrenables, latencia de inferencia, tamaño en disco y Macro F1 en Train, Dev y Test.
-* **Análisis Ético y Limitaciones:** Evaluación de sesgos geográficos del satélite Sentinel-2, variabilidad estacional y límites de resolución espacial para la toma de decisiones agrícolas o urbanas.
+- **Docente:** Lic. Pablo Moreira
+- **Integrantes:**
+  - **Darío Giménez** — [GitHub](https://github.com/dgimenezdeveloper) • [LinkedIn](https://www.linkedin.com/in/daseg/)
+  - **Mauricio Barreras** — [GitHub](https://github.com/Mau-bar-iva) • [LinkedIn](https://www.linkedin.com/in/mauricio-barreras-235b8128a/)
+  - **Federico Paál** — [GitHub](https://github.com/FedericoPaal) • [LinkedIn](https://www.linkedin.com/in/federico-paal/)
+  - **Sasha Porchia** — Investigadora UNaB
 
 ---
 
-## 6. Arquitectura de Repositorio y Trazabilidad MLOps
-
-El repositorio implementa una separación estricta entre el entorno de experimentación científica y la capa de servicio productiva:
-
-```text
-euro-sat-ai-lab/
-├── .devcontainer/              # Entorno reproducible Docker (PyTorch + CUDA + Node.js)
-├── data/
-│   ├── raw/                    # 27.000 imágenes Sentinel-2 organizadas por clase
-│   └── processed/              # splits.json (partición fija Train/Dev/Test)
-├── notebooks/                  # Cuadernos académicos explicativos (Fuente de Verdad)
-│   ├── 01_etapa1_eda_baseline.ipynb
-│   ├── 02_etapa2_mlp_regularizacion.ipynb
-│   ├── 03_etapa3_cnn_augmentation.ipynb
-│   ├── 04_etapa4_vae_latente.ipynb
-│   └── 05_etapa5_sintesis_comparativa.ipynb
-├── src/                        # Módulos Python empaquetados y reutilizables
-│   ├── config.py               # Constantes, semillas y mapeo de clases (EN/ES)
-│   ├── data/                   # Carga de imágenes y pipelines de transformación
-│   ├── models/                 # Arquitecturas: Baseline, MLP, CNN, VAE
-│   ├── training/               # Bucles de optimización, early stopping y tracker
-│   ├── evaluation/             # Matrices de confusión, curvas ROC y diagnóstico
-│   └── api/                    # Servicio de inferencia y telemetría (FastAPI)
-├── artifacts/                  # Almacenamiento inmutable de resultados empíricos
-│   ├── models/                 # Pesos y modelos serializados (.joblib / .pt)
-│   └── metrics/                # Bitácora MLOps (experiments_ledger.json, summary)
-├── streamlit_app/              # Interfaz de exploración científica interactiva
-└── frontend/                   # Dashboard de presentación y monitoreo (React + Vite)
-```
-
-### 6.1. Bitácora Inmutable de Experimentos (MLOps Ledger)
-Cada ejecución de entrenamiento genera un registro estructurado en `artifacts/metrics/experiments_ledger.json` que documenta:
-* Identificador único de corrida (`run_id`, ej. `EXP-001`).
-* Vector de hiperparámetros ($C$, tipo de regularización $L_1/L_2$, algoritmo solver, método de escalado, número de iteraciones).
-* Métricas obtenidas ($\text{Accuracy}_{\text{Train}}$, $\text{Accuracy}_{\text{Dev}}$, $\text{Gap}$, $\text{Macro F1}$, latencia).
-* Diagnóstico clínico automatizado según las reglas formales de la Clase 3.
-* Hipótesis o justificación cualitativa registrada por el experimentador.
-
----
-
-## 7. Protocolo de Reproducibilidad y Ejecución
-
-1. **Entorno Docker Aislado:**  
-   El proyecto utiliza un contenedor con Python 3.10, PyTorch 2.2.1 con aceleración CUDA/CPU y Node.js 20, asegurando la consistencia de versiones en cualquier sistema operativo.
-2. **Determinismo:**  
-   Todas las operaciones estocásticas (particionado, inicialización de tensores, generadores de números aleatorios) utilizan una semilla fija (`seed = 42`).
-3. **Persistencia:**  
-   Los datos crudos de EuroSAT se descargan una única vez y se conservan desacoplados del control de versiones mediante `.gitignore` para optimizar el almacenamiento del repositorio.
+## 📄 License
+This project is licensed under the **MIT License**. See the repository for details.
