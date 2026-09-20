@@ -1,0 +1,26 @@
+{
+  "output": {
+    "filePath": "repomix-output.xml",
+    "style": "xml",
+    "removeComments": false,
+    "removeEmptyLines": true,
+    "topFilesLength": 10
+  },
+  "include": [
+    "src/**/*.py",
+    "scripts/**/*.py",
+    "streamlit_app/**/*.py",
+    "requirements.txt",
+    "README.md"
+  ],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": [
+      "artifacts/**",
+      "data/**",
+      "*.ipynb",
+      "repomix-output.xml"
+    ]
+  }
+}

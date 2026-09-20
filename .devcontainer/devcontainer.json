@@ -1,23 +1,18 @@
 {
-  "name": "EuroSAT AI Lab - DevContainer",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "eurosat-dev",
-  "workspaceFolder": "/workspace",
+  "name": "EuroSAT AI Lab (Lightweight CPU)",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.10-bullseye",
   "customizations": {
     "vscode": {
-      "settings": {
-        "python.defaultInterpreterPath": "/opt/conda/bin/python",
-        "python.linting.enabled": true,
-        "python.formatting.provider": "black",
-        "editor.formatOnSave": true
-      },
       "extensions": [
         "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ms-toolsai.jupyter"
-      ]
+        "ms-toolsai.jupyter",
+        "ms-python.vscode-pylance"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      }
     }
   },
-  "forwardPorts": [8000, 8501, 5173, 8888],
-  "postCreateCommand": "python scripts/setup_project.py && cd frontend && pnpm install"
+  "forwardPorts": [8501, 8888],
+  "postCreateCommand": "pip install --upgrade pip && pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt"
 }

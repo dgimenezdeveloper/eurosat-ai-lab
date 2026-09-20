@@ -1,5 +1,30 @@
 [
   {
+    "run_id": "EXP-008",
+    "timestamp": "2026-09-09 22:45:37",
+    "model_name": "Baseline (Regresi\u00f3n Log\u00edstica L2)",
+    "hyperparameters": {
+      "C": 1.0,
+      "penalty": "l2",
+      "solver": "lbfgs",
+      "scaler": "minmax",
+      "max_iter": 200
+    },
+    "metrics": {
+      "train_accuracy": 85.1,
+      "dev_accuracy": 36.7,
+      "macro_f1": 0.3442,
+      "latency_ms": 60.96,
+      "gap": 48.4
+    },
+    "dataset": {
+      "train_samples": 3000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Prueba de hiperpar\u00e1metros"
+  },
+  {
     "run_id": "EXP-007",
     "timestamp": "2026-09-09 13:49:48",
     "model_name": "Baseline (Regresi\u00f3n Log\u00edstica L2)",

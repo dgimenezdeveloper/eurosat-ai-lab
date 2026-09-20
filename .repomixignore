@@ -1,0 +1,24 @@
+# Archivos de salida de Repomix
+repomix-output.xml
+repomix-output.txt
+
+# Datos y artefactos pesados
+data/**
+artifacts/**
+*.png
+*.jpg
+*.jpeg
+*.joblib
+*.pt
+*.json
+
+# Notebooks con outputs en base64
+*.ipynb
+.ipynb_checkpoints/**
+
+# Dependencias y cachés
+__pycache__/**
+*.pyc
+.venv/**
+node_modules/**
+.git/**
