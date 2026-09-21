@@ -1,12 +1,11 @@
 # 🛰️ EuroSAT AI Lab — Land Cover Multi-Class Satellite Vision & MLOps Platform
 
-[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dgimenezdeveloper/eurosat-ai-lab/blob/main/notebooks/01_etapa1_eda_baseline.ipynb)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](#)
-[![PyTorch](https://img.shields.io/badge/Deep%20Learning-PyTorch%202.2-EE4C2C?logo=pytorch&logoColor=white)](#)
-[![API](https://img.shields.io/badge/API-FastAPI%200.110-009688?logo=fastapi&logoColor=white)](#)
-[![Frontend](https://img.shields.io/badge/Frontend-React%2019%20%7C%20Vite%208-61DAFB?logo=react&logoColor=white)](#)
-[![Docker](https://img.shields.io/badge/Environment-Docker%20CUDA%20DevContainer-2496ED?logo=docker&logoColor=white)](#)
-[![Dataset](https://img.shields.io/badge/Dataset-ESA%20Sentinel--2%20(27K)-green)](#)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dgimenezdeveloper/eurosat-ai-lab/blob/main/notebooks/TP_IA2026_BARRERAS_PORCHIA_PAAL_GIMENEZ_GRUPO-5.ipynb)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/Deep_Learning-PyTorch_2.2-EE4C2C.svg?logo=pytorch)](https://pytorch.org/)
+[![Scikit-Learn](https://img.shields.io/badge/Machine_Learning-Scikit--Learn-F7931E.svg?logo=scikit-learn)](https://scikit-learn.org/)
+[![Streamlit](https://img.shields.io/badge/Frontend-Streamlit_App-FF4B4B.svg?logo=streamlit)](https://streamlit.io/)
+[![Dataset](https://img.shields.io/badge/Dataset-EuroSAT_RGB_(27K)-2BAE66.svg)](https://github.com/phelber/eurosat)
 
 > End-to-end computer vision laboratory and interactive MLOps platform for Land Use and Land Cover (LULC) multi-class classification on European Space Agency (ESA) Sentinel-2 satellite imagery. Features a unified ecosystem with a PyTorch/Scikit-Learn modeling pipeline, a FastAPI inference engine, an interactive React 19 tuning dashboard, and a Streamlit scientific explorer.
 >
