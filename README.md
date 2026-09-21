@@ -249,20 +249,15 @@ Cada corrida realizada en los Notebooks o desde el frontend web queda registrada
 ### 5. Guía de Inicio Rápido
 
 ```bash
-# 1. Clonar repositorio y crear entorno virtual
+# 1. Clonar el repositorio
 git clone https://github.com/dgimenezdeveloper/eurosat-ai-lab.git
 cd eurosat-ai-lab
-python -m venv venv
-source venv/bin/activate # Windows: venv\Scripts\activate
 
-# 2. Instalar dependencias
+# 2. Instalar dependencias exactas
 pip install -r requirements.txt
 
-# 3. Descargar dataset y generar particiones estratificadas
-python scripts/setup_project.py
-
-# 4. Iniciar todos los servicios del laboratorio
-python scripts/start_all.py
+# 3. Lanzar la aplicación web de exploración e inferencia
+streamlit run streamlit_app/app.py
 ```
 
 ---
@@ -275,7 +270,7 @@ Proyecto realizado en la cátedra de **Inteligencia Artificial (2026)** — *Tec
   - **Darío Giménez** — [GitHub](https://github.com/dgimenezdeveloper) • [LinkedIn](https://www.linkedin.com/in/daseg/)
   - **Mauricio Barreras** — [GitHub](https://github.com/Mau-bar-iva) • [LinkedIn](https://www.linkedin.com/in/mauricio-barreras-235b8128a/)
   - **Federico Paál** — [GitHub](https://github.com/FedericoPaal) • [LinkedIn](https://www.linkedin.com/in/federico-paal/)
-  - **Sasha Porchia** — Investigadora UNaB
+  - **Sasha Porchia** — [GitHub](https://github.com/SashaPorchia) • [LinkedIn](https://www.linkedin.com/in/sasha-porchia//)
 
 ---
 
