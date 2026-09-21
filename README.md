@@ -7,7 +7,7 @@
 [![Streamlit](https://img.shields.io/badge/Frontend-Streamlit_App-FF4B4B.svg?logo=streamlit)](https://streamlit.io/)
 [![Dataset](https://img.shields.io/badge/Dataset-EuroSAT_RGB_(27K)-2BAE66.svg)](https://github.com/phelber/eurosat)
 
-> End-to-end computer vision laboratory and interactive MLOps platform for Land Use and Land Cover (LULC) multi-class classification on European Space Agency (ESA) Sentinel-2 satellite imagery. Features a unified ecosystem with a PyTorch/Scikit-Learn modeling pipeline, a FastAPI inference engine, an interactive React 19 tuning dashboard, and a Streamlit scientific explorer.
+> End-to-end computer vision laboratory and interactive MLOps platform for Land Use and Land Cover (LULC) multi-class classification on European Space Agency (ESA) Sentinel-2 satellite imagery. Features a unified ecosystem with a PyTorch/Scikit-Learn modeling pipeline, an interactive Streamlit scientific console, and reproducible research notebooks.
 >
 > 🌐 **Quick Navigation / Navegación Rápida:** [English Documentation](#-english-documentation) | [Documentación en Español](#-documentación-en-español)
 
@@ -55,7 +55,7 @@ To avoid data leakage and preserve class distribution across sets, the 27,000 im
 - **Diagnostic Metrics:** Normalized Confusion Matrices (Row Recall) and Multiclass One-vs-Rest (OvR) ROC Curves with Macro-average AUC.
 
 #### C. Invariable MLOps Experiment Ledger
-Every experiment run—whether executed via JupyterLab or triggered from the React frontend—is logged into `artifacts/metrics/experiments_ledger.json`, capturing:
+Every experiment run—whether executed via JupyterLab or triggered from the Streamlit scientific console—is logged into `artifacts/metrics/experiments_ledger.json`, capturing:
 - Unique run ID (e.g., `EXP-001`), timestamp, and model architecture.
 - Full hyperparameter configuration (Regularization $C$, Solver, Penalty $L_1/L_2$, Scaler type).
 - Train/Dev accuracy, generalization gap, Macro F1, and inference latency.
@@ -70,17 +70,14 @@ Every experiment run—whether executed via JupyterLab or triggered from the Rea
 │                        EUROSAT AI LAB TOPOLOGY                         │
 ├───────────────────┬────────────────────────────────────────────────────┤
 │ Modeling & Data   │ Python 3.10+, PyTorch 2.2, torchvision,            │
-│                   │ Scikit-Learn 1.3, NumPy, Pandas, Pillow, Joblib    │
+│                   │ Scikit-Learn 1.4+, NumPy, Pandas, Pillow, Joblib   │
 ├───────────────────┼────────────────────────────────────────────────────┤
-│ API & Telemetry   │ FastAPI 0.110, Uvicorn, Pydantic v2, CORS          │
+│ Scientific UI     │ Streamlit 1.35+ Interactive Web Console            │
+│                   │ (Live Inference, Metric Telemetry, Dataset Audit)  │
 ├───────────────────┼────────────────────────────────────────────────────┤
-│ User Interfaces   │ Frontend: React 19, Vite 8, Tailwind CSS v4,       │
-│                   │ Base UI primitives, Lucide Icons (Port 5173)       │
-│                   │ Science Console: Streamlit 1.32 (Port 8501)        │
+│ Research Notebooks│ JupyterLab, Google Colab Integration (1-Click Run) │
 ├───────────────────┼────────────────────────────────────────────────────┤
-│ Research Notebooks│ JupyterLab, Google Colab Integration (Port 8888)   │
-├───────────────────┼────────────────────────────────────────────────────┤
-│ Environment       │ VS Code DevContainers, Docker (PyTorch CUDA base)  │
+│ Environment       │ VS Code DevContainers, Lightweight Debian CPU base │
 └───────────────────┴────────────────────────────────────────────────────┘
 ```
 
@@ -95,7 +92,7 @@ Every experiment run—whether executed via JupyterLab or triggered from the Rea
 │ Stage             │ Architecture & Methods          │ Scientific Purpose    │
 ├───────────────────┼─────────────────────────────────┼───────────────────────┤
 │ 1. Baseline       │ Multiclass Logistic Regression  │ Linear reference floor│
-│    (Completed)    │ (Softmax, StandardScaler, L-BFGS)│ and pipeline check.   │
+│    (Completed)    │ (Softmax, StandardScaler, L2)   │ and pipeline check.   │
 ├───────────────────┼─────────────────────────────────┼───────────────────────┤
 │ 2. Deep MLP       │ Dense Neural Network            │ Overcome linear bias  │
 │    (Next)         │ (3+ layers, GELU/ReLU, Dropout) │ with non-linear units.│
@@ -112,13 +109,13 @@ Every experiment run—whether executed via JupyterLab or triggered from the Rea
 ```
 
 #### Stage 1 Empirical Baseline Findings
-- Feature extraction with Z-score standardization (`StandardScaler`) resolved gradient descent oscillations and avoided convergence warnings.
-- The linear Softmax baseline achieved:
-  - **Dev Accuracy:** $\approx 33.2\% - 37.5\%$
-  - **Macro F1-Score:** $0.2989 - 0.3548$
-  - **Macro-average ROC AUC:** $0.689 - 0.780$
-  - **Inference Latency:** $\approx 25 - 35\text{ ms}$ (Satisfies $\le 50\text{ ms}$ limit)
-- **Clinical Diagnosis:** High Structural Bias (*Underfitting*). While it significantly outperforms random guessing ($10\%$), the linear model severely confuses *Pasture* with *Forest* ($36\%$) and *SeaLake* ($36\%$), confirming the necessity of convolutional layers to capture spatial context.
+- **High-Dimensional Memorization Trap ($P \gg N$):** Evaluating an unconstrained linear baseline ($C=1.0$) on 4,000 samples with 12,288 features resulted in severe overfitting ($\text{Train} \approx 99.5\%$, $\text{Dev} \approx 32.4\%$, $\text{Gap} > 65\%$), as 122,880 free parameters memorized pixel noise.
+- **Calibrated Regularization ($C=0.01$):** Applying strong $L_2$ regularization suppressed artificial memorization, exposing the true linear ceiling:
+  - **Dev Accuracy:** $\approx 36.2\%$
+  - **Macro F1-Score:** $\approx 0.3524$
+  - **Generalization Gap:** $\approx 5.1\%$
+  - **Inference Latency:** $\approx 25\text{ ms}$ (Satisfies $\le 50\text{ ms}$ limit)
+- **Clinical Diagnosis:** High Structural Bias (*Underfitting*). While it outperforms random guessing ($10\%$), the linear model severely confuses classes sharing spectral overlap (*Pasture* vs. *Forest*, *Highway* vs. *Industrial*), confirming the necessity of non-linear deep models in Stage 2.
 
 ---
 
@@ -132,32 +129,25 @@ Every experiment run—whether executed via JupyterLab or triggered from the Rea
    cd eurosat-ai-lab
    code .
    ```
-3. Press `F1` and select **"Dev Containers: Reopen in Container"**. The container will build PyTorch, Node.js, and dependencies automatically.
+3. Press `F1` and select **"Dev Containers: Reopen in Container"**. The container builds a lightweight CPU environment with PyTorch in less than 2 minutes.
 
 #### Option B: Manual Local Setup
 ```bash
 # 1. Clone repository & create virtual environment
 git clone https://github.com/dgimenezdeveloper/eurosat-ai-lab.git
 cd eurosat-ai-lab
-python -m venv venv
-source venv/bin/activate # Windows: venv\Scripts\activate
+python3 -m venv .venv
+source .venv/bin/activate # Windows: .venv\Scripts\activate
 
-# 2. Install Python dependencies
+# 2. Install dependencies
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# 3. Download dataset & generate stratified splits (80/10/10)
-python scripts/setup_project.py
-
-# 4. Launch all platform services simultaneously
-python scripts/start_all.py
+# 3. Launch Streamlit Web Console
+streamlit run streamlit_app/app.py
 ```
 
-Once running, access the services:
-- **React Frontend Dashboard:** [http://localhost:5173](http://localhost:5173)
-- **FastAPI Documentation (Swagger):** [http://localhost:8000/docs](http://localhost:8000/docs)
-- **Streamlit Science Console:** [http://localhost:8501](http://localhost:8501)
-- **JupyterLab Server:** [http://localhost:8888](http://localhost:8888)
+Once running, access the scientific explorer at **[http://localhost:8501](http://localhost:8501)**.
 
 ---
 
@@ -165,11 +155,11 @@ Once running, access the services:
 Developed within the **Artificial Intelligence (2026)** curriculum — *University Degree in Programming / Software Development* (Universidad Nacional Guillermo Brown - UNaB):
 
 - **Professor:** Lic. Pablo Moreira
-- **Engineering Team:**
+- **Engineering Team (Grupo 5):**
   - **Darío Giménez** — [GitHub](https://github.com/dgimenezdeveloper) • [LinkedIn](https://www.linkedin.com/in/daseg/)
   - **Mauricio Barreras** — [GitHub](https://github.com/Mau-bar-iva) • [LinkedIn](https://www.linkedin.com/in/mauricio-barreras-235b8128a/)
   - **Federico Paál** — [GitHub](https://github.com/FedericoPaal) • [LinkedIn](https://www.linkedin.com/in/federico-paal/)
-  - **Sasha Porchia** — UNaB AI Researcher
+  - **Sasha Porchia** — [GitHub](https://github.com/SashaPorchia) • [LinkedIn](https://www.linkedin.com/in/sasha-porchia/)
 
 ---
 
@@ -212,34 +202,31 @@ Para evitar fuga de información y asegurar representatividad estadística, el d
 - **Restricciones de Satisfacción Operativa:**
   - **Latencia de Inferencia:** $\le 50\text{ ms}$ por muestra procesada en CPU estándar.
   - **Tamaño del Modelo:** $\le 100\text{ MB}$ por archivo serializado en disco.
-- **Métricas Diagnósticas:** Matrices de confusión normalizadas por fila (Recall) y curvas ROC multiclase One-vs-Rest (OvR) con Macro AUC.
+- **Métricas Diagnósticas:** Matrices de confusión normalizadas por fila (Recall) y análisis de separabilidad de clases.
 
 #### C. Bitácora de Experimentos (MLOps Ledger)
-Cada corrida realizada en los Notebooks o desde el frontend web queda registrada en `artifacts/metrics/experiments_ledger.json`, documentando:
+Cada corrida realizada en los Notebooks o desde la consola web queda registrada en `artifacts/metrics/experiments_ledger.json`, documentando:
 - Identificador de corrida (`run_id`, ej. `EXP-001`), fecha, hora y arquitectura.
-- Hiperparámetros (Parámetro $C$, regularización $L_1/L_2$, algoritmo solver, escalado).
+- Hiperparámetros (Parámetro $C$, regularización $L_2$, algoritmo solver, escalado).
 - Exactitud en Train/Dev, brecha de varianza (*Gap*), Macro F1 y latencia.
-- Diagnóstico clínico automatizado (*Subajuste Estructural* vs. *Sobreajuste*).
+- Diagnóstico clínico automatizado (*Subajuste Estructural* vs. *Sobreajuste por Dimensionalidad*).
 
 ---
 
 ### 3. Arquitectura y Stack Tecnológico
 
-- **Modelado y Datos:** Python 3.10+, PyTorch 2.2, torchvision, Scikit-Learn 1.3, NumPy, Pandas, Pillow, Joblib.
-- **API y Servicios:** FastAPI 0.110, Uvicorn, Pydantic v2.
-- **Interfaces de Usuario:**
-  - Frontend interactivo: React 19, Vite 8, Tailwind CSS v4, Base UI, Lucide Icons (Puerto 5173).
-  - Consola científica: Streamlit 1.32 (Puerto 8501).
-- **Entorno de Investigación:** Cuadernos JupyterLab y compatibilidad con Google Colab (Puerto 8888).
-- **Contenedores:** Docker DevContainers con aceleración CUDA/CPU.
+- **Modelado y Datos:** Python 3.10+, PyTorch 2.2, torchvision, Scikit-Learn 1.4+, NumPy, Pandas, Pillow, Joblib.
+- **Consola Científica:** Streamlit 1.35+ (Inferencia interactiva en tiempo real y telemetría de particiones).
+- **Entorno de Investigación:** Cuadernos JupyterLab reproducibles y compatibilidad en 1 clic con Google Colab.
+- **Contenedores:** Docker DevContainers ultralivianos (Debian/Python 3.10 CPU).
 
 ---
 
 ### 4. Hoja de Ruta en 5 Etapas
 
-1. **Etapa 1 (Baseline Lineal - Estado Actual):** Regresión Logística multiclase (Softmax sobre 12.288 píxeles escalados con `StandardScaler`). Establece el piso de referencia superando ampliamente al azar puro ($33.2\% - 37.5\%$ de exactitud en Dev y Macro AUC de $0.689 - 0.780$), con diagnóstico de subajuste estructural.
+1. **Etapa 1 (Baseline Lineal - Estado Actual):** Regresión Logística multiclase (Softmax sobre 12.288 píxeles escalados con `StandardScaler`). Demostración experimental del ciclo iterativo ($C=1.0$ con memorización por sobreparametrización $P \gg N$ vs. $C=0.01$ con diagnóstico confirmado de **Sesgo Alto Estructural**).
 2. **Etapa 2 (Red Densa Profunda - Siguiente):** Perceptrón Multicapa (MLP) de 3 capas ocultas con funciones de activación no lineales (GELU/ReLU), normalización por lotes (*Batch Normalization*) y regularización estocástica (*Dropout*).
-3. **Etapa 3 (Red Convolucional):** CNN 2D con bloques convolucionales jerárquicos y aumento de datos (*Data Augmentation*) para modelar texturas y reducir la varianza.
+3. **Etapa 3 (Red Convolucional):** CNN 2D con bloques convolucionales jerárquicos y aumento de datos (*Data Augmentation*) para modelar texturas espaciales.
 4. **Etapa 4 (Modelo Generativo VAE):** Autoencoder Variacional para explorar la continuidad del espacio latente satelital.
 5. **Etapa 5 (Síntesis y Evaluación Final):** Evaluación de una única pasada sobre el conjunto Test y análisis global de trade-offs.
 
@@ -252,12 +239,14 @@ Cada corrida realizada en los Notebooks o desde el frontend web queda registrada
 git clone https://github.com/dgimenezdeveloper/eurosat-ai-lab.git
 cd eurosat-ai-lab
 
-# 2. Instalar dependencias exactas
+# 2. Instalar dependencias auditadas
 pip install -r requirements.txt
 
-# 3. Lanzar la aplicación web de exploración e inferencia
+# 3. Lanzar la consola científica interactiva
 streamlit run streamlit_app/app.py
 ```
+
+La consola web estará disponible de inmediato en **[http://localhost:8501](http://localhost:8501)**.
 
 ---
 
@@ -265,13 +254,13 @@ streamlit run streamlit_app/app.py
 Proyecto realizado en la cátedra de **Inteligencia Artificial (2026)** — *Tecnicatura Universitaria en Programación / Desarrollo de Software* (Universidad Nacional Guillermo Brown - UNaB):
 
 - **Docente:** Lic. Pablo Moreira
-- **Integrantes:**
+- **Integrantes (Grupo 5):**
   - **Darío Giménez** — [GitHub](https://github.com/dgimenezdeveloper) • [LinkedIn](https://www.linkedin.com/in/daseg/)
   - **Mauricio Barreras** — [GitHub](https://github.com/Mau-bar-iva) • [LinkedIn](https://www.linkedin.com/in/mauricio-barreras-235b8128a/)
   - **Federico Paál** — [GitHub](https://github.com/FedericoPaal) • [LinkedIn](https://www.linkedin.com/in/federico-paal/)
-  - **Sasha Porchia** — [GitHub](https://github.com/SashaPorchia) • [LinkedIn](https://www.linkedin.com/in/sasha-porchia//)
+  - **Sasha Porchia** — [GitHub](https://github.com/SashaPorchia) • [LinkedIn](https://www.linkedin.com/in/sasha-porchia/)
 
 ---
 
-## 📄 License
-This project is licensed under the **MIT License**. See the repository for details.
+## 📄 Licencia
+Este proyecto se distribuye bajo los términos de la **Licencia MIT**. Consulta el archivo `LICENSE` para más información.

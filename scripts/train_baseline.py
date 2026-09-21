@@ -79,4 +79,4 @@ cm = confusion_matrix(y_dev, y_pred).tolist()
 with open(f"{ARTIFACTS_DIR}/metrics/confusion_matrix_cnn.json", "w") as f:
     json.dump(cm, f)
 
-print("\n🚀 ¡Métricas reales exportadas! Recarga el navegador en localhost:5173 para ver los cambios.")
+print("\n✓ Baseline entrenado y métricas exportadas a artifacts/models/baseline_logreg.joblib")
