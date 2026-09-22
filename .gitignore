@@ -28,3 +28,6 @@ Thumbs.db
 *.log
 .vite/
 .agents/
+
+#3. Ignorar salida de repomix
+repomix-output.xml
