@@ -304,6 +304,7 @@ elif etapa == "🧠 Etapa 2: Red Densa (MLP) & Auditoría":
     with tab_audit:
         st.subheader("🔬 Auditoría Clínica de 50 Muestras de Error (Sección 4.2.1)")
         st.write("Análisis sistemático de fallas en el Dev Set para fundamentar las mejoras arquitectónicas hacia el MLP y CNN.")
+        
         if errors_metadata:
             df_err = pd.DataFrame(errors_metadata)
             col_f1, col_f2 = st.columns([2, 1])
@@ -312,28 +313,40 @@ elif etapa == "🧠 Etapa 2: Red Densa (MLP) & Auditoría":
                 cat_sel = st.selectbox("Filtrar por Causa Diagnóstica:", categorias)
             with col_f2:
                 st.metric("Total de Muestras Auditadas", f"{len(df_err)} casos", delta="Dev Set")
+            
             filtered_err = df_err if cat_sel == "Todas" else df_err[df_err["error_category"] == cat_sel]
             st.caption(f"Mostrando **{len(filtered_err)}** casos de error correspondientes:")
             
-            # Grilla en 3 columnas con tarjetas delimitadas y escala nativa
-            cols = st.columns(3)
+            # Grilla en 2 columnas apaisadas (layout horizontal equilibrado)
+            cols = st.columns(2)
             for idx, (_, r) in enumerate(filtered_err.iterrows()):
-                col = cols[idx % 3]
+                col = cols[idx % 2]
                 img_p = os.path.join(ERRORS_IMG_DIR, r["image_file"])
                 with col:
                     with st.container(border=True):
-                        c_header1, c_header2 = st.columns([3, 2])
-                        c_header1.markdown(f"**Caso #{r['error_id']:02d}**")
-                        c_header2.caption("🛰️ 64×64 px")
+                        # Cabecera con ID y badge de confianza
+                        c_hdr1, c_hdr2 = st.columns([2, 1])
+                        c_hdr1.markdown(f"**Caso #{r['error_id']:02d}**")
+                        c_hdr2.markdown(
+                            f"<p style='text-align: right; margin: 0; font-size: 0.85rem; font-weight: 600; color: #ef4444;'>"
+                            f"Conf: {r['confidence_predicted']}%</p>",
+                            unsafe_allow_html=True
+                        )
                         
-                        if os.path.exists(img_p):
-                            # Escala controlada (110px) sin estiramiento deformante
-                            st.image(Image.open(img_p), width=110)
+                        # Split: Miniatura 96px a la izquierda | Telemetría a la derecha
+                        c_img, c_meta = st.columns([1, 2.5])
+                        with c_img:
+                            if os.path.exists(img_p):
+                                st.image(Image.open(img_p), width=96)
+                            st.caption("64×64 • RGB")
                         
-                        st.markdown(f"**Real:** `{r['real_class_es']}`")
-                        st.markdown(f"**Pred:** :red[**{r['predicted_class_es']}**] ({r['confidence_predicted']}%)")
-                        st.caption(f"🏷️ *{r['error_category']}*")
-                        st.info(f"💡 {r['clinical_justification']}")
+                        with c_meta:
+                            st.markdown(f"🎯 **Real:** `{r['real_class_es']}`")
+                            st.markdown(f"❌ **Predicho:** :red[**{r['predicted_class_es']}**]")
+                            st.caption(f"🏷️ *{r['error_category']}*")
+                        
+                        # Diagnóstico técnico compacto (reemplaza a st.info)
+                        st.markdown(f"> 💡 **Diagnóstico:** {r['clinical_justification']}")
         else:
             st.warning("No se encontró `errors_50_metadata.json`. Ejecutá `python scripts/extract_baseline_errors.py` en tu terminal para generar la auditoría.")
 
