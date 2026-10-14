@@ -1,5 +1,93 @@
 [
   {
+    "run_id": "EXP-011",
+    "timestamp": "2026-10-14 22:02:23",
+    "model_name": "MLP Regularizado (BatchNorm+Drop+L2)",
+    "hyperparameters": {
+      "hidden_layers": [
+        512,
+        256,
+        128
+      ],
+      "activation": "GELU",
+      "dropout": 0.35,
+      "lr": 0.001,
+      "weight_decay": 0.001
+    },
+    "metrics": {
+      "train_accuracy": 76.55,
+      "dev_accuracy": 46.3,
+      "macro_f1": 0.427,
+      "latency_ms": 33.71,
+      "gap": 30.25
+    },
+    "dataset": {
+      "train_samples": 4000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Varianza Alta (Overfitting, Gap=30.25%)",
+    "notes": "Etapa 2: Checkpoint serializado para consola Streamlit e inferencia en vivo."
+  },
+  {
+    "run_id": "EXP-010",
+    "timestamp": "2026-10-14 21:26:53",
+    "model_name": "MLP Regularizado (BatchNorm+Drop+L2)",
+    "hyperparameters": {
+      "hidden_layers": [
+        512,
+        256,
+        128
+      ],
+      "activation": "GELU",
+      "dropout": 0.35,
+      "lr": 0.0008,
+      "weight_decay": 0.001,
+      "early_stopping_patience": 8
+    },
+    "metrics": {
+      "train_accuracy": 76.55,
+      "dev_accuracy": 60.3,
+      "macro_f1": 0.5963302980433034,
+      "latency_ms": 7.15,
+      "gap": 16.25
+    },
+    "dataset": {
+      "train_samples": 4000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Varianza Alta (Overfitting, Gap=16.25%)",
+    "notes": "Etapa 2: Regularizaci\u00f3n efectiva que reduce la brecha a 16.25%. Techo de red densa 1D alcanzado."
+  },
+  {
+    "run_id": "EXP-009",
+    "timestamp": "2026-10-14 21:26:53",
+    "model_name": "MLP Vanilla (Sin Regularizar)",
+    "hyperparameters": {
+      "hidden_layers": [
+        512,
+        256,
+        128
+      ],
+      "activation": "GELU",
+      "dropout": 0.0,
+      "lr": 0.001,
+      "weight_decay": 0.0
+    },
+    "metrics": {
+      "train_accuracy": 94.95,
+      "dev_accuracy": 55.00000000000001,
+      "macro_f1": 0.5768339141518583,
+      "latency_ms": 6.8,
+      "gap": 39.95
+    },
+    "dataset": {
+      "train_samples": 4000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Varianza Alta (Overfitting, Gap=39.95%)",
+    "notes": "Etapa 2: Sobreajuste severo por memorizaci\u00f3n dimensional. Divergencia en Dev Loss."
+  },
+  {
     "run_id": "EXP-008",
     "timestamp": "2026-09-09 22:45:37",
     "model_name": "Baseline (Regresi\u00f3n Log\u00edstica L2)",
