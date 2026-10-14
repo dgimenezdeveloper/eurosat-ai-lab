@@ -1,5 +1,34 @@
 [
   {
+    "run_id": "EXP-012",
+    "timestamp": "2026-10-14 22:50:48",
+    "model_name": "MLP Regularizado (BatchNorm+Drop+L2)",
+    "hyperparameters": {
+      "hidden_layers": [
+        512,
+        256,
+        128
+      ],
+      "activation": "GELU",
+      "dropout": 0.35,
+      "lr": 0.001,
+      "weight_decay": 0.001
+    },
+    "metrics": {
+      "train_accuracy": 68.53,
+      "dev_accuracy": 47.4,
+      "macro_f1": 0.4424,
+      "latency_ms": 26.6,
+      "gap": 21.13
+    },
+    "dataset": {
+      "train_samples": 4000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Varianza Alta (Overfitting, Gap=21.13%)",
+    "notes": "Etapa 2: Curvas de aprendizaje por \u00e9poca y matriz de confusi\u00f3n serializadas."
+  },
+  {
     "run_id": "EXP-011",
     "timestamp": "2026-10-14 22:02:23",
     "model_name": "MLP Regularizado (BatchNorm+Drop+L2)",
