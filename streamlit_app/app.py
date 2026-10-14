@@ -37,7 +37,8 @@ CM_PATH = os.path.join(ARTIFACTS_DIR, "metrics", "confusion_matrix_cnn.json")
 LEDGER_PATH = os.path.join(ARTIFACTS_DIR, "metrics", "experiments_ledger.json")
 ERRORS_METADATA_PATH = os.path.join(ARTIFACTS_DIR, "error_samples", "errors_50_metadata.json")
 ERRORS_IMG_DIR = os.path.join(ARTIFACTS_DIR, "error_samples")
-
+MLP_HISTORY_PATH = os.path.join(ARTIFACTS_DIR, "metrics", "mlp_history.json")
+MLP_CM_PATH = os.path.join(ARTIFACTS_DIR, "metrics", "confusion_matrix_mlp.json")
 # ==========================================
 # 1. CARGA CACHEADA DE RECURSOS
 # ==========================================
@@ -351,29 +352,84 @@ elif etapa == "🧠 Etapa 2: Red Densa (MLP) & Auditoría":
             st.warning("No se encontró `errors_50_metadata.json`. Ejecutá `python scripts/extract_baseline_errors.py` en tu terminal para generar la auditoría.")
 
     with tab_arch:
-        st.subheader("Arquitectura del Perceptrón Multicapa (MLP) y Diagnóstico Clínico")
-        st.code("""
-Entrada: 12.288 dimensiones (64x64x3 píxeles aplanados)
- ├── Capa 1: Linear(12288 -> 512) + BatchNorm1d + GELU + Dropout(0.35)
- ├── Capa 2: Linear(512 -> 256)   + BatchNorm1d + GELU + Dropout(0.35)
- ├── Capa 3: Linear(256 -> 128)   + BatchNorm1d + GELU + Dropout(0.35)
- └── Salida: Linear(128 -> 10)     (Logits para CrossEntropyLoss)
-        """, language="text")
+        st.subheader("🏗️ Arquitectura MLP, Curvas de Aprendizaje y Fronteras No Lineales")
         
-        st.subheader("Diagnóstico Formal de Errores (Andrew Ng)")
-        col_m1, col_m2 = st.columns(2)
-        with col_m1:
-            st.metric("Error en Entrenamiento (Train)", "23.45%", delta="-17.4% vs Baseline")
-            st.metric("Error en Validación (Dev)", "39.70%", delta="-21.4% vs Baseline")
-        with col_m2:
-            st.metric("Sesgo Evitable (Train - Bayes)", "18.45%", delta="DOMINANTE", delta_color="inverse")
-            st.metric("Brecha de Varianza (Dev - Train)", "16.25%", delta="Controlada", delta_color="normal")
+        # 1. Curvas de Aprendizaje (Loss y Accuracy vs Épocas)
+        st.markdown("### 1. Curvas de Aprendizaje (Entrenamiento vs. Validación por Época)")
+        if os.path.exists(MLP_HISTORY_PATH):
+            with open(MLP_HISTORY_PATH, "r") as f:
+                hist = json.load(f)
             
-        st.error("""
-        **DIAGNÓSTICO FORMAL: SESGO ALTO ESTRUCTURAL DOMINANTE (UNDERFITTING)**  
-        * **Causa:** El MLP regularizado superó al Baseline (Dev Acc saltó de 36.7% a 60.3%), pero chocó contra el techo del aplanamiento (12.288 números sin topología 2D).  
-        * **Acción de Cátedra:** Pasar a la **Etapa 3: Redes Convolucionales (CNN)** para incorporar campos receptivos locales e invarianza translacional.
-        """)
+            c_c1, c_c2 = st.columns(2)
+            with c_c1:
+                fig_loss = go.Figure()
+                fig_loss.add_trace(go.Scatter(x=hist["epochs"], y=hist["train_loss"], mode="lines+markers", name="Train Loss", line=dict(color="#ef4444", width=2)))
+                fig_loss.add_trace(go.Scatter(x=hist["epochs"], y=hist["dev_loss"], mode="lines+markers", name="Dev Loss", line=dict(color="#3b82f6", width=2, dash="dash")))
+                fig_loss.update_layout(title="Evolución de la Función de Pérdida (CrossEntropy)", xaxis_title="Época", yaxis_title="Loss", height=320, margin=dict(l=0, r=0, t=35, b=10))
+                st.plotly_chart(fig_loss, use_container_width=True)
+                
+            with c_c2:
+                fig_acc = go.Figure()
+                fig_acc.add_trace(go.Scatter(x=hist["epochs"], y=hist["train_acc"], mode="lines+markers", name="Train Acc (%)", line=dict(color="#10b981", width=2)))
+                fig_acc.add_trace(go.Scatter(x=hist["epochs"], y=hist["dev_acc"], mode="lines+markers", name="Dev Acc (%)", line=dict(color="#6366f1", width=2, dash="dash")))
+                fig_acc.update_layout(title="Exactitud por Época (Accuracy %)", xaxis_title="Época", yaxis_title="Exactitud (%)", height=320, margin=dict(l=0, r=0, t=35, b=10))
+                st.plotly_chart(fig_acc, use_container_width=True)
+                
+            st.caption("🔍 **Interpretación:** La estabilización simultánea de `Dev Loss` y `Dev Acc` hacia la época 10-12 confirma la convergencia y el control del sobreajuste mediante Dropout (0.35) y BatchNorm.")
+        else:
+            st.info("Ejecutá `python scripts/train_mlp.py` para generar las curvas de aprendizaje en vivo.")
+
+        st.divider()
+
+        # 2. Matriz de Confusión Oficial del MLP
+        st.markdown("### 2. Matriz de Confusión del MLP (Dev Set)")
+        if os.path.exists(MLP_CM_PATH) and splits is not None:
+            with open(MLP_CM_PATH, "r") as f:
+                cm_mlp = np.array(json.load(f))
+            classes_es = [CLASS_NAMES_ES[c] for c in splits["classes"]]
+            cm_mlp_norm = cm_mlp.astype('float') / cm_mlp.sum(axis=1)[:, np.newaxis]
+            
+            fig_cm_mlp = px.imshow(
+                cm_mlp_norm, x=classes_es, y=classes_es,
+                labels=dict(x="Predicción del MLP", y="Clase Real", color="Recall"),
+                text_auto=".2f", color_continuous_scale="Purples"
+            )
+            fig_cm_mlp.update_layout(height=520, margin=dict(l=0, r=0, t=20, b=0))
+            st.plotly_chart(fig_cm_mlp, use_container_width=True)
+            st.caption("📊 **Contraste con Baseline:** Notar la notable mejora en clases homogéneas como Mar/Lago y Bosque, mientras que las clases con textura espacial (Cultivos, Carretera/Río) aún sufren el sesgo de aplanamiento.")
+
+        st.divider()
+
+        # 3. Demostración Geométrica: Hiperplano Lineal vs. Frontera Cuádrica No Lineal
+        st.markdown("### 3. Geometría de Decisión: Hiperplano Lineal vs. Cuádrica No Lineal")
+        st.write("Visualización conceptual en $\\mathbb{R}^2$ de por qué el MLP supera al Baseline lineal mediante activaciones no lineales:")
+        
+        # Simulación sintética didáctica
+        np.random.seed(42)
+        grid_x, grid_y = np.meshgrid(np.linspace(-3, 3, 100), np.linspace(-3, 3, 100))
+        # Frontera lineal: W1*x + W2*y = 0
+        z_linear = 0.8 * grid_x - 1.2 * grid_y
+        # Frontera cuádrica no lineal: ax^2 + by^2 + cxy - r^2
+        z_quad = (grid_x**2 + grid_y**2) - 2.5
+        
+        c_geo1, c_geo2 = st.columns(2)
+        with c_geo1:
+            fig_lin = go.Figure(data=go.Contour(
+                z=z_linear, x=np.linspace(-3, 3, 100), y=np.linspace(-3, 3, 100),
+                colorscale="Blues", showscale=False, contours=dict(start=0, end=0, coloring='lines', size=1)
+            ))
+            fig_lin.update_layout(title="Frontera Lineal (Baseline): Hiperplano Plano", height=300, margin=dict(l=0, r=0, t=35, b=0))
+            st.plotly_chart(fig_lin, use_container_width=True)
+            st.caption("❌ **Límite Teórico:** Solo separa regiones mediante cortes planos. Incapaz de aislar islas o racimos curvos.")
+            
+        with c_geo2:
+            fig_q = go.Figure(data=go.Contour(
+                z=z_quad, x=np.linspace(-3, 3, 100), y=np.linspace(-3, 3, 100),
+                colorscale="Viridis", showscale=False, contours=dict(start=0, end=0, coloring='lines', size=1)
+            ))
+            fig_q.update_layout(title="Frontera No Lineal (MLP): Superficie Cuádrica / Curva", height=300, margin=dict(l=0, r=0, t=35, b=0))
+            st.plotly_chart(fig_q, use_container_width=True)
+            st.caption("✅ **Capacidad No Lineal:** Las activaciones GELU deforman el espacio permitiendo envolventes y fronteras cerradas.")
 
     with tab_mlp_infer:
         st.subheader("Inferencia Comparativa: Baseline Lineal vs. MLP PyTorch")
