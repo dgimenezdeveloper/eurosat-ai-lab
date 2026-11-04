@@ -1,10 +1,10 @@
 [
   {
-    "name": "MLP Regularizado (BatchNorm+Drop+L2) (EXP-012)",
+    "name": "MLP Regularizado (BatchNorm+Drop+L2) (EXP-013)",
     "version": "C=1.0 | iter=100",
     "accuracy": 47.4,
     "f1": 0.4424,
-    "latency": 26.6,
+    "latency": 121.55,
     "status": "Evaluated"
   }
 ]
