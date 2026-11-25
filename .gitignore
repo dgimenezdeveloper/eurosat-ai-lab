@@ -31,3 +31,9 @@ Thumbs.db
 
 #3. Ignorar salida de repomix
 repomix-output.xml
+# 4. Archivos locales que la app de Streamlit no necesita
+#    (del TP entregado sólo se versiona el notebook; del backup de Colab, figuras/métricas/modelos)
+TP_IA2026_BARRERAS_PORCHIA_PAAL_GIMENEZ_EuroSAT/*
+!TP_IA2026_BARRERAS_PORCHIA_PAAL_GIMENEZ_EuroSAT/TP_IA2026_BARRERAS_PORCHIA_PAAL_GIMENEZ_GRUPO5.ipynb
+artifacts_colab/artifacts-20261125T092450Z-1-001/artifacts/error_samples/
+artifacts_colab/artifacts-20261125T092450Z-1-001/artifacts/models/baseline_logreg.joblib
