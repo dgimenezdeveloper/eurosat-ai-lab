@@ -1,0 +1,453 @@
+{
+  "champion": "CNN sin augmentation",
+  "models": [
+    {
+      "Modelo": "Baseline LogReg (C=1.0)",
+      "Etapa": 1,
+      "Arquitectura": "Lineal 12.288 → 10 (píxeles aplanados)",
+      "Configuración": "C=1.0 (L2 débil), lbfgs, max_iter=300",
+      "Parámetros": 122890,
+      "Imágenes Train": 4000,
+      "Imágenes Dev": 1000,
+      "Train Acc (%)": 99.52499999999999,
+      "Dev Acc (%)": 32.5,
+      "Dev Macro F1": 0.29467479581805583,
+      "Tiempo Entren. (s)": 115.43012952804565,
+      "Brecha Train-Dev (pp)": 67.02499999999999,
+      "Test Acc (%)": 34.03703703703704,
+      "Test Macro F1": 0.3147421880249956,
+      "Brecha Dev-Test F1 (pp)": -2.006739220693976
+    },
+    {
+      "Modelo": "Baseline LogReg (C=0.01)",
+      "Etapa": 1,
+      "Arquitectura": "Lineal 12.288 → 10 (píxeles aplanados)",
+      "Configuración": "C=0.01 (L2 fuerte), lbfgs, max_iter=300",
+      "Parámetros": 122890,
+      "Imágenes Train": 4000,
+      "Imágenes Dev": 1000,
+      "Train Acc (%)": 90.725,
+      "Dev Acc (%)": 38.7,
+      "Dev Macro F1": 0.3513984902380043,
+      "Tiempo Entren. (s)": 112.55662417411804,
+      "Brecha Train-Dev (pp)": 52.02499999999999,
+      "Test Acc (%)": 37.29629629629629,
+      "Test Macro F1": 0.35147856578627507,
+      "Brecha Dev-Test F1 (pp)": -0.00800755482707749
+    },
+    {
+      "Modelo": "MLP Vanilla",
+      "Etapa": 2,
+      "Arquitectura": "Densa 12.288→512→256→128→10, GELU",
+      "Configuración": "Adam lr=1e-3, sin regularización, 35 épocas, batch 128",
+      "Parámetros": 6457482,
+      "Imágenes Train": 4000,
+      "Imágenes Dev": 1000,
+      "Train Acc (%)": 92.7,
+      "Dev Acc (%)": 55.00000000000001,
+      "Dev Macro F1": 0.5404547604452918,
+      "Tiempo Entren. (s)": 11.586333513259888,
+      "Brecha Train-Dev (pp)": 37.699999999999996,
+      "Test Acc (%)": 54.77777777777778,
+      "Test Macro F1": 0.5377718650970718,
+      "Brecha Dev-Test F1 (pp)": 0.26828953482200824
+    },
+    {
+      "Modelo": "MLP Regularizado",
+      "Etapa": 2,
+      "Arquitectura": "Densa 12.288→512→256→128→10, GELU + BatchNorm + Dropout",
+      "Configuración": "AdamW lr=8e-4, wd=1e-3, dropout=0.35, early stopping (paciencia 8), batch 128",
+      "Parámetros": 6459274,
+      "Imágenes Train": 4000,
+      "Imágenes Dev": 1000,
+      "Train Acc (%)": 78.64999999999999,
+      "Dev Acc (%)": 60.099999999999994,
+      "Dev Macro F1": 0.5996087654311202,
+      "Tiempo Entren. (s)": 7.445570707321167,
+      "Brecha Train-Dev (pp)": 18.549999999999997,
+      "Test Acc (%)": 60.29629629629629,
+      "Test Macro F1": 0.6003707381338524,
+      "Brecha Dev-Test F1 (pp)": -0.07619727027322609
+    },
+    {
+      "Modelo": "CNN sin augmentation",
+      "Etapa": 3,
+      "Arquitectura": "CNN 3 bloques Conv-BN-ReLU-MaxPool (32/64/128) + head denso",
+      "Configuración": "AdamW lr=1e-3, wd=1e-4, cosine, 20 épocas, batch 64, sin augmentation",
+      "Parámetros": 160426,
+      "Imágenes Train": 21600,
+      "Imágenes Dev": 2700,
+      "Train Acc (%)": 96.86111111111111,
+      "Dev Acc (%)": 95.44444444444444,
+      "Dev Macro F1": 0.9529616776510773,
+      "Tiempo Entren. (s)": 361.5412986278534,
+      "Brecha Train-Dev (pp)": 1.4166666666666714,
+      "Test Acc (%)": 95.03703703703704,
+      "Test Macro F1": 0.9485039077695797,
+      "Brecha Dev-Test F1 (pp)": 0.44577698814975975
+    },
+    {
+      "Modelo": "CNN con augmentation",
+      "Etapa": 3,
+      "Arquitectura": "CNN 3 bloques Conv-BN-ReLU-MaxPool (32/64/128) + head denso",
+      "Configuración": "AdamW lr=1e-3, wd=1e-4, cosine, 20 épocas, batch 64, flips + rot90 + crop + color jitter",
+      "Parámetros": 160426,
+      "Imágenes Train": 21600,
+      "Imágenes Dev": 2700,
+      "Train Acc (%)": 93.89351851851852,
+      "Dev Acc (%)": 93.14814814814815,
+      "Dev Macro F1": 0.9308337284990549,
+      "Tiempo Entren. (s)": 663.3156886100769,
+      "Brecha Train-Dev (pp)": 0.7453703703703667,
+      "Test Acc (%)": 93.0,
+      "Test Macro F1": 0.9280049934519751,
+      "Brecha Dev-Test F1 (pp)": 0.2828735047079811
+    },
+    {
+      "Modelo": "CNN con augmentation (4.000 imágenes)",
+      "Etapa": 3,
+      "Arquitectura": "CNN 3 bloques Conv-BN-ReLU-MaxPool (32/64/128) + head denso",
+      "Configuración": "AdamW lr=1e-3, wd=1e-4, cosine, 20 épocas, batch 64, flips + rot90 + crop + color jitter, 4.000 imágenes",
+      "Parámetros": 160426,
+      "Imágenes Train": 4000,
+      "Imágenes Dev": 2700,
+      "Train Acc (%)": 84.85000000000001,
+      "Dev Acc (%)": 83.96296296296296,
+      "Dev Macro F1": 0.8343287111729737,
+      "Tiempo Entren. (s)": 156.6165153980255,
+      "Brecha Train-Dev (pp)": 0.8870370370370466,
+      "Test Acc (%)": 82.33333333333334,
+      "Test Macro F1": 0.8153958081468284,
+      "Brecha Dev-Test F1 (pp)": 1.8932903026145254
+    },
+    {
+      "Modelo": "Secuencial A (ResNet-18 + LogReg)",
+      "Etapa": 3,
+      "Arquitectura": "ResNet-18 ImageNet congelada (512) + LogReg",
+      "Configuración": "entrada 224px, LogReg C=1.0",
+      "Parámetros": 5130,
+      "Imágenes Train": 21600,
+      "Imágenes Dev": 2700,
+      "Train Acc (%)": 99.75462962962963,
+      "Dev Acc (%)": 93.74074074074073,
+      "Dev Macro F1": 0.9353707547646071,
+      "Tiempo Entren. (s)": 80.26934504508972,
+      "Brecha Train-Dev (pp)": 6.0138888888889,
+      "Test Acc (%)": 91.92592592592592,
+      "Test Macro F1": 0.9162117989792412,
+      "Brecha Dev-Test F1 (pp)": 1.915895578536586
+    },
+    {
+      "Modelo": "Secuencial B (backbone propio + LogReg)",
+      "Etapa": 3,
+      "Arquitectura": "Backbone de 'CNN sin augmentation' congelado (512) + LogReg",
+      "Configuración": "LogReg C=1.0 sobre embeddings (tiempo: sólo el clasificador)",
+      "Parámetros": 5130,
+      "Imágenes Train": 21600,
+      "Imágenes Dev": 2700,
+      "Train Acc (%)": 99.4074074074074,
+      "Dev Acc (%)": 94.81481481481482,
+      "Dev Macro F1": 0.9465664283220075,
+      "Tiempo Entren. (s)": 25.619454622268677,
+      "Brecha Train-Dev (pp)": 4.592592592592581,
+      "Test Acc (%)": 94.48148148148148,
+      "Test Macro F1": 0.9423720881197276,
+      "Brecha Dev-Test F1 (pp)": 0.41943402022799336
+    },
+    {
+      "Modelo": "VAE (d=64) + linear probe",
+      "Etapa": 4,
+      "Arquitectura": "VAE convolucional, latente d=64",
+      "Configuración": "Adam lr=0.001, early stopping (paciencia 7), batch 64",
+      "Parámetros": 2172099,
+      "Imágenes Train": 21600,
+      "Imágenes Dev": 2700,
+      "Train Acc (%)": null,
+      "Dev Acc (%)": null,
+      "Dev Macro F1": 0.5462048759659787,
+      "Tiempo Entren. (s)": 343.5811975002289,
+      "Brecha Train-Dev (pp)": null,
+      "Test Acc (%)": null,
+      "Test Macro F1": 0.5526416172836909,
+      "Brecha Dev-Test F1 (pp)": -0.6436741317712213
+    }
+  ],
+  "test_per_class": [
+    {
+      "Clase": "Cultivo Anual",
+      "Imágenes Test": 300,
+      "Precisión": 0.9331103678929766,
+      "Recall": 0.93,
+      "F1": 0.9315525876460768
+    },
+    {
+      "Clase": "Bosque",
+      "Imágenes Test": 300,
+      "Precisión": 0.9867549668874173,
+      "Recall": 0.9933333333333333,
+      "F1": 0.9900332225913622
+    },
+    {
+      "Clase": "Vegetación Herbácea",
+      "Imágenes Test": 300,
+      "Precisión": 0.95578231292517,
+      "Recall": 0.9366666666666666,
+      "F1": 0.9461279461279462
+    },
+    {
+      "Clase": "Autopista",
+      "Imágenes Test": 250,
+      "Precisión": 0.9285714285714286,
+      "Recall": 0.884,
+      "F1": 0.9057377049180327
+    },
+    {
+      "Clase": "Zona Industrial",
+      "Imágenes Test": 250,
+      "Precisión": 0.9490196078431372,
+      "Recall": 0.968,
+      "F1": 0.9584158415841584
+    },
+    {
+      "Clase": "Pastizal",
+      "Imágenes Test": 200,
+      "Precisión": 0.9278846153846154,
+      "Recall": 0.965,
+      "F1": 0.946078431372549
+    },
+    {
+      "Clase": "Cultivo Permanente",
+      "Imágenes Test": 250,
+      "Precisión": 0.9058823529411765,
+      "Recall": 0.924,
+      "F1": 0.9148514851485149
+    },
+    {
+      "Clase": "Zona Residencial",
+      "Imágenes Test": 300,
+      "Precisión": 0.9834983498349835,
+      "Recall": 0.9933333333333333,
+      "F1": 0.988391376451078
+    },
+    {
+      "Clase": "Río",
+      "Imágenes Test": 250,
+      "Precisión": 0.9311740890688259,
+      "Recall": 0.92,
+      "F1": 0.9255533199195171
+    },
+    {
+      "Clase": "Mar o Lago",
+      "Imágenes Test": 300,
+      "Precisión": 0.979933110367893,
+      "Recall": 0.9766666666666667,
+      "F1": 0.9782971619365609
+    }
+  ],
+  "test_confusion_matrix": [
+    [
+      279,
+      1,
+      1,
+      0,
+      0,
+      5,
+      10,
+      0,
+      0,
+      4
+    ],
+    [
+      0,
+      298,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      281,
+      0,
+      1,
+      3,
+      10,
+      0,
+      3,
+      2
+    ],
+    [
+      2,
+      0,
+      2,
+      221,
+      10,
+      2,
+      3,
+      2,
+      8,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      5,
+      242,
+      0,
+      0,
+      2,
+      1,
+      0
+    ],
+    [
+      2,
+      1,
+      1,
+      0,
+      0,
+      193,
+      1,
+      0,
+      2,
+      0
+    ],
+    [
+      8,
+      1,
+      7,
+      2,
+      0,
+      0,
+      231,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      298,
+      0,
+      0
+    ],
+    [
+      4,
+      1,
+      1,
+      10,
+      0,
+      3,
+      0,
+      1,
+      230,
+      0
+    ],
+    [
+      4,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      2,
+      293
+    ]
+  ],
+  "test_bootstrap_ci95": [
+    0.9397719180209602,
+    0.9568100942035578
+  ],
+  "latency": {
+    "dispositivo": "cuda",
+    "total_test_s": 0.18521881103515625,
+    "ms_por_imagen_lote64": 0.06859955964265045,
+    "ms_por_imagen_individual": 1.0584735870361328,
+    "tamano_mb_float32": 0.641704
+  },
+  "subgroups_brightness": [
+    {
+      "Quintil": "Q1 (más oscuro)",
+      "Imágenes": 540,
+      "Brillo medio": 58.222293853759766,
+      "Exactitud (%)": 98.33333333333333,
+      "Clase más frecuente": "Bosque"
+    },
+    {
+      "Quintil": "Q2",
+      "Imágenes": 540,
+      "Brillo medio": 76.81063079833984,
+      "Exactitud (%)": 95.55555555555556,
+      "Clase más frecuente": "Pastizal"
+    },
+    {
+      "Quintil": "Q3",
+      "Imágenes": 540,
+      "Brillo medio": 93.25403594970703,
+      "Exactitud (%)": 93.14814814814815,
+      "Clase más frecuente": "Zona Residencial"
+    },
+    {
+      "Quintil": "Q4",
+      "Imágenes": 540,
+      "Brillo medio": 110.35272979736328,
+      "Exactitud (%)": 93.14814814814815,
+      "Clase más frecuente": "Zona Industrial"
+    },
+    {
+      "Quintil": "Q5 (más brillante)",
+      "Imágenes": 540,
+      "Brillo medio": 142.46058654785156,
+      "Exactitud (%)": 95.0,
+      "Clase más frecuente": "Cultivo Anual"
+    }
+  ],
+  "human_review_thresholds": [
+    {
+      "Umbral de confianza": 0.5,
+      "Decisión automática (%)": 98.85185185185185,
+      "Exactitud en lo automático (%)": 95.54140127388536,
+      "Derivado a humano (%)": 1.1481481481481481,
+      "Errores atrapados por la revisión (%)": 11.194029850746269
+    },
+    {
+      "Umbral de confianza": 0.7,
+      "Decisión automática (%)": 93.55555555555556,
+      "Exactitud en lo automático (%)": 97.94140934283452,
+      "Derivado a humano (%)": 6.444444444444445,
+      "Errores atrapados por la revisión (%)": 61.19402985074627
+    },
+    {
+      "Umbral de confianza": 0.85,
+      "Decisión automática (%)": 88.14814814814815,
+      "Exactitud en lo automático (%)": 98.9075630252101,
+      "Derivado a humano (%)": 11.851851851851853,
+      "Errores atrapados por la revisión (%)": 80.59701492537313
+    },
+    {
+      "Umbral de confianza": 0.95,
+      "Decisión automática (%)": 79.03703703703704,
+      "Exactitud en lo automático (%)": 99.48453608247422,
+      "Derivado a humano (%)": 20.962962962962965,
+      "Errores atrapados por la revisión (%)": 91.7910447761194
+    }
+  ],
+  "vae": {
+    "dev_mse": 0.0037421672604978085,
+    "test_mse": 0.0037574435118585825,
+    "dev_probe_f1": 0.5462048759659787,
+    "test_probe_f1": 0.5526416172836909
+  }
+}

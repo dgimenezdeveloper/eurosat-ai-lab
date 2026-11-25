@@ -1,0 +1,10 @@
+[
+  {
+    "name": "CNN sin augmentation (EuroSATCNN 3 bloques) (EXP-016)",
+    "version": "C=1.0 | iter=100",
+    "accuracy": 95.44444444444444,
+    "f1": 0.9529616776510773,
+    "latency": 0.0,
+    "status": "Evaluated"
+  }
+]

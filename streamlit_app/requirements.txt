@@ -1,0 +1,11 @@
+# Dependencias de la app para Streamlit Community Cloud (sólo CPU; mismas versiones que el entorno local).
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.14.1+cpu
+torchvision==0.29.2+cpu
+streamlit==1.65.0
+scikit-learn==1.7.2
+joblib==1.6.0
+numpy==1.26.4
+pandas==2.3.3
+pillow==12.3.0
+plotly==7.2.0

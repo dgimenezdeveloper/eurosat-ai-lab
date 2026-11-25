@@ -1,0 +1,425 @@
+[
+  {
+    "run_id": "EXP-016",
+    "timestamp": "2026-11-21 23:55:19",
+    "model_name": "CNN sin augmentation (EuroSATCNN 3 bloques)",
+    "hyperparameters": {
+      "epochs": 20,
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "batch_size": 64,
+      "augmentation": "ninguna"
+    },
+    "metrics": {
+      "train_accuracy": 96.86111111111111,
+      "dev_accuracy": 95.44444444444444,
+      "macro_f1": 0.9529616776510773,
+      "latency_ms": 0.0,
+      "gap": 1.42
+    },
+    "dataset": {
+      "train_samples": 21600,
+      "dev_samples": 2700
+    },
+    "diagnosis": "Equilibrado (Gap=1.42%)",
+    "notes": "Etapa 3: mejor CNN End-to-End."
+  },
+  {
+    "run_id": "EXP-015",
+    "timestamp": "2026-11-21 23:32:44",
+    "model_name": "MLP Regularizado (BatchNorm+Drop+L2)",
+    "hyperparameters": {
+      "hidden_layers": [
+        512,
+        256,
+        128
+      ],
+      "activation": "GELU",
+      "dropout": 0.35,
+      "lr": 0.0008,
+      "weight_decay": 0.001,
+      "early_stopping_patience": 8
+    },
+    "metrics": {
+      "train_accuracy": 78.64999999999999,
+      "dev_accuracy": 60.099999999999994,
+      "macro_f1": 0.5996087654311202,
+      "latency_ms": 0.033922672271728516,
+      "gap": 18.55
+    },
+    "dataset": {
+      "train_samples": 4000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Varianza Alta (Overfitting, Gap=18.55%)",
+    "notes": "Etapa 2: MLP regularizado (modelo elegido de la etapa)."
+  },
+  {
+    "run_id": "EXP-014",
+    "timestamp": "2026-11-21 23:32:44",
+    "model_name": "MLP Vanilla (Sin Regularizar)",
+    "hyperparameters": {
+      "hidden_layers": [
+        512,
+        256,
+        128
+      ],
+      "activation": "GELU",
+      "dropout": 0.0,
+      "lr": 0.001,
+      "weight_decay": 0.0
+    },
+    "metrics": {
+      "train_accuracy": 92.7,
+      "dev_accuracy": 55.00000000000001,
+      "macro_f1": 0.5404547604452918,
+      "latency_ms": 0.033922672271728516,
+      "gap": 37.7
+    },
+    "dataset": {
+      "train_samples": 4000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Varianza Alta (Overfitting, Gap=37.7%)",
+    "notes": "Etapa 2: MLP sin regularizaci\u00f3n (ablaci\u00f3n)."
+  },
+  {
+    "run_id": "EXP-013",
+    "timestamp": "2026-10-14 23:07:45",
+    "model_name": "MLP Regularizado (BatchNorm+Drop+L2)",
+    "hyperparameters": {
+      "hidden_layers": [
+        512,
+        256,
+        128
+      ],
+      "activation": "GELU",
+      "dropout": 0.35,
+      "batch_norm": true,
+      "lr": 0.001,
+      "weight_decay": 0.001
+    },
+    "metrics": {
+      "train_accuracy": 68.53,
+      "dev_accuracy": 47.4,
+      "macro_f1": 0.4424,
+      "latency_ms": 121.55,
+      "gap": 21.13
+    },
+    "dataset": {
+      "train_samples": 4000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Varianza Alta (Overfitting, Gap=21.13%)",
+    "notes": "Etapa 2: Comparativa de regularizaci\u00f3n (Vanilla vs Regularizado) y matriz de confusi\u00f3n serializada."
+  },
+  {
+    "run_id": "EXP-012",
+    "timestamp": "2026-10-14 22:50:48",
+    "model_name": "MLP Regularizado (BatchNorm+Drop+L2)",
+    "hyperparameters": {
+      "hidden_layers": [
+        512,
+        256,
+        128
+      ],
+      "activation": "GELU",
+      "dropout": 0.35,
+      "lr": 0.001,
+      "weight_decay": 0.001
+    },
+    "metrics": {
+      "train_accuracy": 68.53,
+      "dev_accuracy": 47.4,
+      "macro_f1": 0.4424,
+      "latency_ms": 26.6,
+      "gap": 21.13
+    },
+    "dataset": {
+      "train_samples": 4000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Varianza Alta (Overfitting, Gap=21.13%)",
+    "notes": "Etapa 2: Curvas de aprendizaje por \u00e9poca y matriz de confusi\u00f3n serializadas."
+  },
+  {
+    "run_id": "EXP-011",
+    "timestamp": "2026-10-14 22:02:23",
+    "model_name": "MLP Regularizado (BatchNorm+Drop+L2)",
+    "hyperparameters": {
+      "hidden_layers": [
+        512,
+        256,
+        128
+      ],
+      "activation": "GELU",
+      "dropout": 0.35,
+      "lr": 0.001,
+      "weight_decay": 0.001
+    },
+    "metrics": {
+      "train_accuracy": 76.55,
+      "dev_accuracy": 46.3,
+      "macro_f1": 0.427,
+      "latency_ms": 33.71,
+      "gap": 30.25
+    },
+    "dataset": {
+      "train_samples": 4000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Varianza Alta (Overfitting, Gap=30.25%)",
+    "notes": "Etapa 2: Checkpoint serializado para consola Streamlit e inferencia en vivo."
+  },
+  {
+    "run_id": "EXP-010",
+    "timestamp": "2026-10-14 21:26:53",
+    "model_name": "MLP Regularizado (BatchNorm+Drop+L2)",
+    "hyperparameters": {
+      "hidden_layers": [
+        512,
+        256,
+        128
+      ],
+      "activation": "GELU",
+      "dropout": 0.35,
+      "lr": 0.0008,
+      "weight_decay": 0.001,
+      "early_stopping_patience": 8
+    },
+    "metrics": {
+      "train_accuracy": 76.55,
+      "dev_accuracy": 60.3,
+      "macro_f1": 0.5963302980433034,
+      "latency_ms": 7.15,
+      "gap": 16.25
+    },
+    "dataset": {
+      "train_samples": 4000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Varianza Alta (Overfitting, Gap=16.25%)",
+    "notes": "Etapa 2: Regularizaci\u00f3n efectiva que reduce la brecha a 16.25%. Techo de red densa 1D alcanzado."
+  },
+  {
+    "run_id": "EXP-009",
+    "timestamp": "2026-10-14 21:26:53",
+    "model_name": "MLP Vanilla (Sin Regularizar)",
+    "hyperparameters": {
+      "hidden_layers": [
+        512,
+        256,
+        128
+      ],
+      "activation": "GELU",
+      "dropout": 0.0,
+      "lr": 0.001,
+      "weight_decay": 0.0
+    },
+    "metrics": {
+      "train_accuracy": 94.95,
+      "dev_accuracy": 55.00000000000001,
+      "macro_f1": 0.5768339141518583,
+      "latency_ms": 6.8,
+      "gap": 39.95
+    },
+    "dataset": {
+      "train_samples": 4000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Varianza Alta (Overfitting, Gap=39.95%)",
+    "notes": "Etapa 2: Sobreajuste severo por memorizaci\u00f3n dimensional. Divergencia en Dev Loss."
+  },
+  {
+    "run_id": "EXP-008",
+    "timestamp": "2026-09-09 22:45:37",
+    "model_name": "Baseline (Regresi\u00f3n Log\u00edstica L2)",
+    "hyperparameters": {
+      "C": 1.0,
+      "penalty": "l2",
+      "solver": "lbfgs",
+      "scaler": "minmax",
+      "max_iter": 200
+    },
+    "metrics": {
+      "train_accuracy": 85.1,
+      "dev_accuracy": 36.7,
+      "macro_f1": 0.3442,
+      "latency_ms": 60.96,
+      "gap": 48.4
+    },
+    "dataset": {
+      "train_samples": 3000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Prueba de hiperpar\u00e1metros"
+  },
+  {
+    "run_id": "EXP-007",
+    "timestamp": "2026-09-09 13:49:48",
+    "model_name": "Baseline (Regresi\u00f3n Log\u00edstica L2)",
+    "hyperparameters": {
+      "C": 4.01,
+      "penalty": "l2",
+      "solver": "lbfgs",
+      "scaler": "standard",
+      "max_iter": 500
+    },
+    "metrics": {
+      "train_accuracy": 99.77,
+      "dev_accuracy": 34.0,
+      "macro_f1": 0.3094,
+      "latency_ms": 326.71,
+      "gap": 65.77
+    },
+    "dataset": {
+      "train_samples": 6000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Prueba de hiperpar\u00e1metros"
+  },
+  {
+    "run_id": "EXP-006",
+    "timestamp": "2026-09-07 01:40:43",
+    "model_name": "Baseline (Regresi\u00f3n Log\u00edstica L2)",
+    "hyperparameters": {
+      "C": 3.91,
+      "penalty": "l2",
+      "solver": "lbfgs",
+      "scaler": "standard",
+      "max_iter": 400
+    },
+    "metrics": {
+      "train_accuracy": 99.87,
+      "dev_accuracy": 32.5,
+      "macro_f1": 0.2927,
+      "latency_ms": 74.85,
+      "gap": 67.37
+    },
+    "dataset": {
+      "train_samples": 3000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Prueba de hiperpar\u00e1metros"
+  },
+  {
+    "run_id": "EXP-005",
+    "timestamp": "2026-09-07 01:20:56",
+    "model_name": "Baseline (LogReg L2)",
+    "hyperparameters": {
+      "C": 3.81,
+      "penalty": "l2",
+      "solver": "lbfgs",
+      "scaler": "standard",
+      "max_iter": 125
+    },
+    "metrics": {
+      "train_accuracy": 85.2,
+      "dev_accuracy": 37.5,
+      "macro_f1": 0.3548,
+      "latency_ms": 42.34,
+      "gap": 47.7
+    },
+    "dataset": {
+      "train_samples": 5000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Prueba de hiperpar\u00e1metros"
+  },
+  {
+    "run_id": "EXP-004",
+    "timestamp": "2026-09-07 01:05:17",
+    "model_name": "Baseline (Logistic Regression)",
+    "hyperparameters": {
+      "C": 3.01,
+      "max_iter": 75,
+      "solver": "lbfgs"
+    },
+    "metrics": {
+      "train_accuracy": 82.23,
+      "dev_accuracy": 35.3,
+      "macro_f1": 0.3317,
+      "latency_ms": 17.71,
+      "gap": 46.93
+    },
+    "dataset": {
+      "train_samples": 3000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Ajuste de C y max_iter"
+  },
+  {
+    "run_id": "EXP-003",
+    "timestamp": "2026-09-07 00:55:35",
+    "model_name": "Baseline (Logistic Regression)",
+    "hyperparameters": {
+      "C": 3.51,
+      "max_iter": 500,
+      "solver": "lbfgs"
+    },
+    "metrics": {
+      "train_accuracy": 100.0,
+      "dev_accuracy": 32.7,
+      "macro_f1": 0.2924,
+      "latency_ms": 159.08,
+      "gap": 67.3
+    },
+    "dataset": {
+      "train_samples": 3000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Ajuste de C y max_iter"
+  },
+  {
+    "run_id": "EXP-002",
+    "timestamp": "2026-09-07 00:52:40",
+    "model_name": "Baseline (Logistic Regression)",
+    "hyperparameters": {
+      "C": 0.71,
+      "max_iter": 75,
+      "solver": "lbfgs"
+    },
+    "metrics": {
+      "train_accuracy": 82.93,
+      "dev_accuracy": 36.2,
+      "macro_f1": 0.3384,
+      "latency_ms": 22.6,
+      "gap": 46.73
+    },
+    "dataset": {
+      "train_samples": 3000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Ajuste de C y max_iter"
+  },
+  {
+    "run_id": "EXP-001",
+    "timestamp": "2026-09-07 00:51:44",
+    "model_name": "Baseline (Logistic Regression)",
+    "hyperparameters": {
+      "C": 0.71,
+      "max_iter": 300,
+      "solver": "lbfgs"
+    },
+    "metrics": {
+      "train_accuracy": 99.83,
+      "dev_accuracy": 32.4,
+      "macro_f1": 0.2916,
+      "latency_ms": 151.29,
+      "gap": 67.43
+    },
+    "dataset": {
+      "train_samples": 3000,
+      "dev_samples": 1000
+    },
+    "diagnosis": "Sesgo Alto (Underfitting Estructural)",
+    "notes": "Ajuste de C y max_iter"
+  }
+]
